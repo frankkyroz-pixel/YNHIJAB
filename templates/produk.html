@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Produk - YN Hijab</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/produk.css') }}"
+    >
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <div class="sidebar">
+
+        <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        
+    </div>
+
+        <nav>
+
+            <a href="/dashboard">
+                Home
+            </a>
+
+            <a href="/produk" class="active">Produk</a>
+            <a href="/stok">Stok</a>
+            <a href="/pesanan">Pesanan</a>
+            <a href="/barang-masuk">Barang Masuk</a>
+            <a href="/barang-keluar">Barang Keluar</a>
+            <a href="/laporan">Laporan</a>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
+    <main class="content">
+
+        <!-- HEADER -->
+
+        <header>
+
+            <h1>Produk</h1>
+
+            <div class="admin">
+                🔔 👤 <strong>Admin</strong>
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
+
+        <section class="summary">
+
+            <div class="card">
+
+                <div class="circle"></div>
+
+                <div>
+
+                    <p>Total Produk</p>
+
+                    <h2>15</h2>
+
+                    <small>
+                        Semua produk aktif
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="circle"></div>
+
+                <div>
+
+                    <p>Total Stok</p>
+
+                    <h2>15</h2>
+
+                    <small>
+                        Stok tersedia
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="circle"></div>
+
+                <div>
+
+                    <p>Pesanan Hari Ini</p>
+
+                    <h2>15</h2>
+
+                    <small>
+                        Pesanan hari ini
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="circle"></div>
+
+                <div>
+
+                    <p>Stok Menipis</p>
+
+                    <h2>15</h2>
+
+                    <small>
+                        Perlu restok segera
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             TOOLBAR
+        ========================== -->
+
+        <section class="toolbar">
+
+            <input
+                type="text"
+                id="searchProduct"
+                placeholder="🔍 Cari produk, warna atau kategori..."
+            >
+
+
+            <select id="filterKategori">
+
+                <option value="">
+                    Semua kategori
+                </option>
+
+                {% for item in kategori %}
+
+                    <option value="{{ item.nama_kategori }}">
+                        {{ item.nama_kategori }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <script>
+
+                const filterKategori =
+                    document.getElementById("filterKategori");
+
+                filterKategori.addEventListener("change", function () {
+
+                    const kategoriDipilih =
+                        this.value.toLowerCase();
+
+                    const rows =
+                        document.querySelectorAll(".product-row");
+
+                    rows.forEach(function (row) {
+
+                        const kategori =
+                            row.children[2].innerText
+                                .toLowerCase()
+                                .trim();
+
+                        if (
+                            kategoriDipilih === "" ||
+                            kategori === kategoriDipilih
+                            ) {
+                            row.style.display = "grid";
+                        } else {
+                            row.style.display = "none";
+                        }
+
+                    });
+
+                });
+
+            </script>
+
+<select id="filterStok">
+
+    <option value="">
+        Semua Status Stok
+    </option>
+
+    <option value="aman">
+        Stok Aman
+    </option>
+
+    <option value="menipis">
+        Stok Menipis
+    </option>
+
+</select>
+
+<script>
+
+    const filterStok =
+        document.getElementById("filterStok");
+
+    filterStok.addEventListener("change", function () {
+
+        const statusDipilih = this.value;
+
+        const rows =
+            document.querySelectorAll(".product-row");
+
+        rows.forEach(function (row) {
+
+            const stok =
+                parseInt(row.dataset.stok) || 0;
+
+            if (statusDipilih === "") {
+
+                row.style.display = "grid";
+
+            } else if (
+                statusDipilih === "aman" &&
+                stok > 5
+            ) {
+
+                row.style.display = "grid";
+
+            } else if (
+                statusDipilih === "menipis" &&
+                stok <= 5
+            ) {
+
+                row.style.display = "grid";
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+</script>
+            <button
+                class="reset"
+                type="button"
+                id="resetFilter"
+            >
+                Reset Filter
+            </button>
+
+
+            <button
+                class="add"
+                type="button"
+                onclick="openAddProduct()"
+            >
+                ＋ Tambah Produk
+            </button>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUCT AREA
+        ========================== -->
+
+        <section class="product-area">
+
+
+            <!-- =========================
+                 TABEL PRODUK
+            ========================== -->
+
+            <div class="product-table">
+
+                <div class="table-header">
+
+                    <span>Foto</span>
+
+                    <span>Produk</span>
+
+                    <span>Kategori</span>
+
+                    <span>Warna</span>
+
+                    <span>Harga</span>
+
+                    <span>Stok</span>
+
+                    <span>Rak</span>
+
+                    <span>Aksi</span>
+
+                </div>
+
+
+                {% for produk in produk %}
+
+                <div 
+                    class="product-row"
+                    data-stok="{{ produk.stok }}"
+                >
+
+                    <div class="foto">
+    {% if produk.gambar %}
+        <img
+            src="{{ url_for('static', filename='img/produk/' + produk.gambar) }}"
+            alt="{{ produk.nama_produk }}"
+        >
+    {% else %}
+        -
+    {% endif %}
+</div>
+
+
+                    <div>
+
+                        <strong>
+                            {{ produk.nama_produk }}
+                        </strong>
+
+                        <small>
+                            {{ produk.kode_produk }}
+                        </small>
+
+                    </div>
+
+
+                    <div>
+                        {{ produk.nama_kategori }}
+                    </div>
+
+
+                    <div>
+                        {{ produk.nama_warna or '-' }}
+                    </div>
+
+
+                    <div>
+                        Rp {{ "{:,.0f}".format(produk.harga_jual).replace(",",".") }}
+                    </div>
+
+
+                    <div>
+                        {{ produk.stok }}
+                    </div>
+
+
+                    <div>
+                        {{ produk.rak or '-' }}
+                    </div>
+
+
+                    <div class="aksi">
+
+                        <button
+                            class="delete"
+                            type="button"
+                            data-id="{{ produk.id_produk }}"
+                            onclick="hapusProduk(this)"
+                        >
+                            🗑
+                        </button>
+
+
+                        <button
+                            class="edit"
+                            type="button"
+                            data-id="{{ produk.id_produk }}"
+                        >
+                            ✎
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =================================
+                 PANEL TAMBAH PRODUK
+            ================================== -->
+
+            <div
+                class="add-product-panel"
+                id="addProductPanel"
+            >
+
+                <div class="panel-title">
+
+                    <h2>
+                        Tambah Produk
+                    </h2>
+
+
+                    <button
+                        type="button"
+                        class="close-panel"
+                        onclick="closeAddProduct()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <form
+    method="post"
+    action="/produk/tambah"
+    enctype="multipart/form-data"
+>
+
+
+                    <!-- NAMA PRODUK -->
+
+                    <label>
+                        Nama Produk
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nama_produk"
+                        placeholder="Contoh: Mukena Royal"
+                        required
+                    >
+
+
+                    <!-- FOTO PRODUK -->
+
+                    <label>
+                        Foto Produk
+                    </label>
+
+                    <input
+                        type="file"
+                        name="gambar"
+                        accept=".jpg,.jpeg,.png,.webp"
+                        required
+                    >
+
+
+                    <!-- KATEGORI -->
+
+                    <label>
+                        Kategori
+                    </label>
+
+                    <select
+                        name="id_kategori"
+                        required
+                    >
+
+                        <option value="">
+                            Pilih Kategori
+                        </option>
+
+                        {% for item in kategori %}
+
+                        <option
+                            value="{{ item.id_kategori }}"
+                        >
+                            {{ item.nama_kategori }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <!-- =========================
+                         WARNA / VARIAN
+                    ========================== -->
+
+                    <label>
+                        Warna / Varian
+                    </label>
+
+
+                    <div class="warna-list">
+
+                        {% for item in warna %}
+
+                        <label class="warna-item">
+
+                            <input
+                                type="checkbox"
+                                name="warna[]"
+                                value="{{ item.id_warna }}"
+                            >
+
+                            <span>
+                                {{ item.nama_warna }}
+                            </span>
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- TAMBAH WARNA -->
+
+                    <button
+                        type="button"
+                        class="add-color"
+                        onclick="tambahWarna()"
+                    >
+                        ＋ Tambah Warna
+                    </button>
+
+
+                    <div id="formWarnaBaru"></div>
+
+
+                    <!-- HARGA -->
+
+                    <label>
+                        Harga Jual
+                    </label>
+
+                    <div class="price-input">
+
+                        <span>
+                            Rp.
+                        </span>
+
+                        <input
+                            type="text"
+                            name="harga_jual"
+                            id="hargaJual"
+                            placeholder="0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- RAK -->
+
+                    <label>
+                        Rak/Lokasi
+                    </label>
+
+                    <select name="id_rak">
+
+                        <option value="">
+                            Pilih Rak/Lokasi
+                        </option>
+
+                        <option value="1">
+                            A01
+                        </option>
+
+                        <option value="2">
+                            A02
+                        </option>
+
+                        <option value="3">
+                            A03
+                        </option>
+
+                    </select>
+
+
+                    <!-- STOK -->
+
+                    <label>
+                        Stok Awal
+                    </label>
+
+                    <input
+                        type="number"
+                        name="stok_awal"
+                        value="0"
+                        min="0"
+                    >
+
+
+                    <!-- BUTTON -->
+
+                    <div class="form-buttons">
+
+                        <button
+                            type="button"
+                            class="cancel"
+                            onclick="closeAddProduct()"
+                        >
+                            Batal
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="save"
+                        >
+                            Simpan
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================
+                 PANEL EDIT PRODUK
+            ================================== -->
+
+            <div
+                class="add-product-panel"
+                id="editProductPanel"
+            >
+
+                <div class="panel-title">
+
+                    <h2>
+                        Edit Produk
+                    </h2>
+
+
+                    <button
+                        type="button"
+                        class="close-panel"
+                        onclick="closeEditProduct()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <!-- NAMA -->
+
+                <label>
+                    Nama Produk
+                </label>
+
+                <input
+                    type="text"
+                    id="editNamaProduk"
+                >
+
+
+                <!-- KATEGORI -->
+
+                <label>
+                    Kategori
+                </label>
+
+                <select id="editKategori">
+
+                    {% for item in kategori %}
+
+                    <option
+                        value="{{ item.id_kategori }}"
+                    >
+                        {{ item.nama_kategori }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <!-- WARNA -->
+
+                <label>
+                    Warna / Varian
+                </label>
+
+                <div class="warna-list">
+
+                    {% for item in warna %}
+
+                    <label class="warna-item">
+
+                        <input
+                            type="checkbox"
+                            value="{{ item.id_warna }}"
+                        >
+
+                        <span>
+                            {{ item.nama_warna }}
+                        </span>
+
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- HARGA -->
+
+                <label>
+                    Harga Jual
+                </label>
+
+                <div class="price-input">
+
+                    <span>
+                        Rp.
+                    </span>
+
+                    <input
+                        type="number"
+                        id="editHargaJual"
+                    >
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <div class="form-buttons">
+
+                    <button
+                        type="button"
+                        class="cancel"
+                        onclick="closeEditProduct()"
+                    >
+                        Batal
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="save"
+                    >
+                        Simpan
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================
+         JAVASCRIPT TAMBAH PRODUK
+    ================================== -->
+
+    <script>
+
+        function openAddProduct() {
+
+            const panel =
+                document.getElementById("addProductPanel");
+
+            panel.classList.add("show");
+
+        }
+
+
+        function closeAddProduct() {
+
+            const panel =
+                document.getElementById("addProductPanel");
+
+            panel.classList.remove("show");
+
+        }
+
+    </script>
+
+
+    <!-- =================================
+         JAVASCRIPT SEARCH
+    ================================== -->
+
+   <script>
+
+    const searchInput = document.getElementById("searchProduct");
+
+    searchInput.addEventListener("input", function () {
+
+        const keyword = this.value.toLowerCase().trim();
+
+        const rows = document.querySelectorAll(".product-row");
+
+        rows.forEach(function (row) {
+
+            const text = row.innerText.toLowerCase();
+
+            if (text.includes(keyword)) {
+                row.style.display = "grid";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    });
+
+    </script>
+
+    <!-- =================================
+         JAVASCRIPT EDIT PRODUK
+    ================================== -->
+
+    <script>
+
+        const editButtons =
+            document.querySelectorAll(".edit");
+
+
+        editButtons.forEach(function(button) {
+
+            button.addEventListener("click", function() {
+
+                const idProduk =
+                    this.dataset.id;
+
+
+                console.log(
+                    "Produk yang dipilih:",
+                    idProduk
+                );
+
+
+                const panel =
+                    document.getElementById(
+                        "editProductPanel"
+                    );
+
+
+                panel.classList.add("show");
+
+            });
+
+        });
+
+
+        function closeEditProduct() {
+
+            const panel =
+                document.getElementById(
+                    "editProductPanel"
+                );
+
+
+            panel.classList.remove("show");
+
+        }
+
+    </script>
+
+
+    <!-- =================================
+         JAVASCRIPT TAMBAH WARNA
+    ================================== -->
+
+    <script>
+
+        function tambahWarna() {
+
+            const container =
+                document.getElementById(
+                    "formWarnaBaru"
+                );
+
+
+            container.innerHTML = `
+
+                <div
+                    style="
+                        display: flex;
+                        gap: 8px;
+                        margin-top: 10px;
+                    "
+                >
+
+                    <input
+                        type="text"
+                        id="inputWarnaBaru"
+                        placeholder="Nama warna baru"
+                    >
+
+
+                    <button
+                        type="button"
+                        class="add-color"
+                        onclick="simpanWarna()"
+                    >
+                        Simpan
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+    </script>
+
+    <script>
+
+       let produkYangAkanDihapus = null;
+
+        function hapusProduk(button) {
+
+            produkYangAkanDihapus = button.dataset.id;
+
+        document.getElementById("deleteModal").classList.add("show");
+        }
+
+        function tutupDeleteModal() {
+
+        document.getElementById("deleteModal").classList.remove("show");
+
+        produkYangAkanDihapus = null;
+        }
+
+        function konfirmasiHapusProduk() {
+
+            if (!produkYangAkanDihapus) {
+                return;
+            }
+
+            const form = document.createElement("form");
+
+            form.method = "POST";
+            form.action = "/produk/hapus/" + produkYangAkanDihapus;
+
+            document.body.appendChild(form);
+
+            form.submit();
+        }
+    </script>
+
+        <!-- MODAL HAPUS PRODUK -->
+<div class="delete-modal" id="deleteModal">
+
+    <div class="delete-modal-box">
+
+        <div class="delete-icon">
+            🗑
+        </div>
+
+        <h3>Hapus Produk?</h3>
+
+        <p>
+            Produk yang dipilih akan dinonaktifkan.
+            Yakin ingin melanjutkan?
+        </p>
+
+        <div class="delete-modal-actions">
+
+            <button
+                type="button"
+                class="btn-batal"
+                onclick="tutupDeleteModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="btn-hapus"
+                onclick="konfirmasiHapusProduk()"
+            >
+                Hapus
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =================================
+     JAVASCRIPT RESET FILTER
+================================= -->
+
+<script>
+
+    const resetFilter =
+        document.getElementById("resetFilter");
+
+    resetFilter.addEventListener("click", function () {
+
+        // Kosongkan pencarian
+        document.getElementById("searchProduct").value = "";
+
+        // Kembalikan kategori
+        document.getElementById("filterKategori").value = "";
+
+        // Kembalikan status stok
+        document.getElementById("filterStok").value = "";
+
+        // Tampilkan semua produk
+        const rows =
+            document.querySelectorAll(".product-row");
+
+        rows.forEach(function (row) {
+
+            row.style.display = "grid";
+
+        });
+
+    });
+
+</script>
+
+<script>
+
+    const hargaJual = document.getElementById("hargaJual");
+
+    hargaJual.addEventListener("input", function () {
+
+        let angka = this.value.replace(/\D/g, "");
+
+        if (angka === "") {
+            this.value = "";
+            return;
+        }
+
+        this.value = Number(angka).toLocaleString("id-ID");
+
+    });
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Laporan - YN Hijab</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/laporan.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        
+    </div>
+
+    <nav>
+
+        <a href="/dashboard"> Home </a>
+        <a href="/produk"> Produk </a>
+        <a href="/stok"> Stok </a>
+        <a href="/pesanan"> Pesanan </a>
+        <a href="/barang-masuk"> Barang Masuk </a>
+        <a href="/barang-keluar"> Barang Keluar </a>
+        <a href="/laporan"class="active"> Laporan </a>
+
+    </nav>
+
+</aside>
+
+
+
+<!-- CONTENT -->
+
+<main class="content">
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div>
+
+            <h2>Laporan</h2>
+
+            <p>
+                Laporan aktivitas YN Hijab
+            </p>
+
+        </div>
+
+
+        <div class="admin">
+
+            🔔 &nbsp; 👤 Admin
+
+        </div>
+
+    </header>
+
+
+
+    <!-- SUMMARY -->
+
+    <section class="summary">
+
+
+        <div class="card">
+
+            <div class="icon">
+                💰
+            </div>
+
+            <div>
+
+                <p>Total Penjualan</p>
+
+                <h3>
+                    Rp {{ "{:,.0f}".format(
+                        ringkasan_pesanan.total_penjualan or 0
+                    ).replace(",", ".") }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <div class="icon">
+                🛒
+            </div>
+
+            <div>
+
+                <p>Total Pesanan</p>
+
+                <h3>
+                    {{ ringkasan_pesanan.total_pesanan }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <div class="icon">
+                📥
+            </div>
+
+            <div>
+
+                <p>Barang Masuk</p>
+
+                <h3>
+                    {{ ringkasan_masuk.total_barang_masuk }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <div class="icon">
+                📤
+            </div>
+
+            <div>
+
+                <p>Barang Keluar</p>
+
+                <h3>
+                    {{ ringkasan_keluar.total_barang_keluar }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- TOOLBAR -->
+
+    <section class="panel toolbar">
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchLaporan"
+                placeholder="Cari pelanggan atau nomor pesanan..."
+            >
+
+        </div>
+
+
+        <select id="filterStatus">
+
+            <option value="">
+                Semua Status
+            </option>
+
+            <option value="Menunggu">
+                Menunggu
+            </option>
+
+            <option value="Diproses">
+                Diproses
+            </option>
+
+            <option value="Siap Dipacking">
+                Siap Dipacking
+            </option>
+
+            <option value="Dikirim">
+                Dikirim
+            </option>
+
+            <option value="Selesai">
+                Selesai
+            </option>
+
+            <option value="dibatalkan">
+                Dibatalkan
+            </option>
+
+        </select>
+
+
+        <button
+            type="button"
+            onclick="resetFilter()">
+
+            Reset
+
+        </button>
+
+
+        <a
+            href="/laporan/export"
+            class="btn-export">
+
+            📊 Export Excel
+
+        </a>
+
+
+    </section>
+
+
+
+    <!-- GRAFIK -->
+
+    <section class="panel grafik">
+
+
+        <div class="panel-header">
+
+            <h3>
+                Grafik Penjualan
+            </h3>
+
+
+            <select id="periodeGrafik">
+
+                <option value="7">
+                    7 Hari Terakhir
+                </option>
+
+                <option value="30">
+                    30 Hari Terakhir
+                </option>
+
+                <option value="90">
+                    3 Bulan Terakhir
+                </option>
+
+                <option value="365">
+                    1 Tahun Terakhir
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="chart">
+
+            <canvas id="reportChart"></canvas>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- TABEL -->
+
+    <section class="panel">
+
+
+        <div class="panel-header">
+
+            <h3>
+                Detail Laporan Penjualan
+            </h3>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table id="laporanTable">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            No Pesanan
+                        </th>
+
+                        <th>
+                            Tanggal
+                        </th>
+
+                        <th>
+                            Pelanggan
+                        </th>
+
+                        <th>
+                            No HP
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Pengambilan
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for item in data_laporan %}
+
+                    <tr
+                        data-status="{{ item.STATUS }}"
+                        data-search="{{ item.id_pesanan }} {{ item.nama_customor }} {{ item.no_hp }}">
+
+                        <td>
+                            #{{ item.id_pesanan }}
+                        </td>
+
+                        <td>
+                            {{ item.tanggal }}
+                        </td>
+
+                        <td>
+                            {{ item.nama_customor }}
+                        </td>
+
+                        <td>
+                            {{ item.no_hp }}
+                        </td>
+
+                        <td>
+
+                            Rp {{
+                                "{:,.0f}".format(
+                                    item.total_harga or 0
+                                ).replace(",", ".")
+                            }}
+
+                        </td>
+
+                        <td>
+
+                            <span class="status">
+
+                                {{ item.STATUS }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ item.metode_pengambilan }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty">
+
+                            Belum ada data laporan.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+
+/* =========================================
+   DATA DARI FLASK
+========================================= */
+
+const grafikPenjualan =
+    {{ grafik_penjualan | tojson }};
+
+
+
+/* =========================================
+   DATA GRAFIK
+========================================= */
+
+const dataPenjualan = {
+
+    7: {
+        labels: [],
+        data: []
+    },
+
+    30: {
+        labels: [],
+        data: []
+    },
+
+    90: {
+        labels: [],
+        data: []
+    },
+
+    365: {
+        labels: [],
+        data: []
+    }
+
+};
+
+
+
+/* =========================================
+   BUAT DATA GRAFIK
+========================================= */
+
+function buatDataGrafik(periode) {
+
+    const sekarang = new Date();
+
+    const batas = new Date();
+
+    batas.setDate(
+        sekarang.getDate() - periode
+    );
+
+
+    const data = grafikPenjualan
+        .map(item => {
+
+            return {
+
+                tanggal:
+                    new Date(item.tanggal),
+
+                penjualan:
+                    Number(item.penjualan)
+
+            };
+
+        })
+
+        .filter(item => {
+
+            return item.tanggal >= batas;
+
+        })
+
+        .sort((a, b) => {
+
+            return a.tanggal - b.tanggal;
+
+        });
+
+
+    return {
+
+        labels: data.map(item => {
+
+            return item.tanggal
+                .toLocaleDateString(
+                    "id-ID",
+                    {
+                        day: "numeric",
+                        month: "short"
+                    }
+                );
+
+        }),
+
+
+        data: data.map(item => {
+
+            return item.penjualan;
+
+        })
+
+    };
+
+}
+
+
+
+/* =========================================
+   SIAPKAN SEMUA PERIODE
+========================================= */
+
+dataPenjualan[7] =
+    buatDataGrafik(7);
+
+
+dataPenjualan[30] =
+    buatDataGrafik(30);
+
+
+dataPenjualan[90] =
+    buatDataGrafik(90);
+
+
+dataPenjualan[365] =
+    buatDataGrafik(365);
+
+
+
+/* =========================================
+   CHART
+========================================= */
+
+const ctx =
+    document.getElementById(
+        "reportChart"
+    );
+
+
+const reportChart =
+    new Chart(ctx, {
+
+        type: "line",
+
+
+        data: {
+
+            labels:
+                dataPenjualan[7].labels,
+
+
+            datasets: [
+
+                {
+
+                    label:
+                        "Penjualan",
+
+
+                    data:
+                        dataPenjualan[7].data,
+
+
+                    borderWidth:
+                        2,
+
+
+                    tension:
+                        0.4,
+
+
+                    pointRadius:
+                        3,
+
+
+                    pointHoverRadius:
+                        6,
+
+
+                    fill:
+                        true
+
+                }
+
+            ]
+
+        },
+
+
+        options: {
+
+            responsive:
+                true,
+
+
+            maintainAspectRatio:
+                false,
+
+
+            interaction: {
+
+                intersect:
+                    false,
+
+
+                mode:
+                    "index"
+
+            },
+
+
+            plugins: {
+
+                legend: {
+
+                    display:
+                        false
+
+                },
+
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label:
+                            function(context) {
+
+                                return " Rp " +
+
+                                    context.parsed.y
+                                        .toLocaleString(
+                                            "id-ID"
+                                        );
+
+                            }
+
+                    }
+
+                }
+
+            },
+
+
+            scales: {
+
+                x: {
+
+                    grid: {
+
+                        display:
+                            false
+
+                    }
+
+                },
+
+
+                y: {
+
+                    beginAtZero:
+                        true,
+
+
+                    ticks: {
+
+                        callback:
+                            function(value) {
+
+                                return "Rp " +
+
+                                    (
+                                        value /
+                                        1000000
+                                    ) +
+
+                                    "jt";
+
+                            }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+
+/* =========================================
+   DROPDOWN PERIODE
+========================================= */
+
+document
+    .getElementById("periodeGrafik")
+    .addEventListener(
+        "change",
+        function() {
+
+            const periode =
+                Number(this.value);
+
+
+            reportChart.data.labels =
+                dataPenjualan[periode].labels;
+
+
+            reportChart.data.datasets[0].data =
+                dataPenjualan[periode].data;
+
+
+            reportChart.update();
+
+        }
+    );
+
+
+
+/* =========================================
+   SEARCH + FILTER
+========================================= */
+
+const searchInput =
+    document.getElementById(
+        "searchLaporan"
+    );
+
+
+const statusFilter =
+    document.getElementById(
+        "filterStatus"
+    );
+
+
+function filterTable() {
+
+    const search =
+        searchInput.value
+            .toLowerCase();
+
+
+    const status =
+        statusFilter.value
+            .toLowerCase();
+
+
+    const rows =
+        document.querySelectorAll(
+            "#laporanTable tbody tr"
+        );
+
+
+    rows.forEach(row => {
+
+        const rowSearch =
+            (
+                row.dataset.search ||
+                ""
+            ).toLowerCase();
+
+
+        const rowStatus =
+            (
+                row.dataset.status ||
+                ""
+            ).toLowerCase();
+
+
+        const cocokSearch =
+            rowSearch.includes(
+                search
+            );
+
+
+        const cocokStatus =
+            !status ||
+            rowStatus === status;
+
+
+        row.style.display =
+            cocokSearch &&
+            cocokStatus
+                ? ""
+                : "none";
+
+    });
+
+}
+
+
+
+searchInput.addEventListener(
+    "input",
+    filterTable
+);
+
+
+statusFilter.addEventListener(
+    "change",
+    filterTable
+);
+
+
+
+/* =========================================
+   RESET
+========================================= */
+
+function resetFilter() {
+
+    searchInput.value =
+        "";
+
+
+    statusFilter.value =
+        "";
+
+
+    filterTable();
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

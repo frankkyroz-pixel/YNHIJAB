@@ -1,0 +1,644 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #222;
+}
+
+
+/* SIDEBAR */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 265px;
+    height: 100vh;
+
+    background: #f2e5e1;
+}
+
+.logo {
+    height: 205px;
+    text-align: center;
+    padding-top: 0px;
+}
+
+.logo img {
+    width: 170px;
+    height: 170px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 5px;
+}
+
+.logo p {
+    font-family: Georgia, serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #9c5d55;
+    margin: 0;
+}
+
+
+/* NAVBAR */
+
+nav {
+    display: flex;
+    flex-direction: column;
+}
+
+nav a {
+    display: block;
+
+    width: 100%;
+    height: 54px;
+
+    padding: 16px 55px;
+
+    text-decoration: none;
+    color: #111;
+
+    font-size: 16px;
+    line-height: 22px;
+
+    transition: 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+    background: #ffffff;
+}
+
+
+/* CONTENT */
+
+.content {
+    margin-left: 265px;
+
+    min-height: 100vh;
+
+    padding: 30px 35px;
+}
+
+
+/* HEADER */
+
+.header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 28px;
+}
+
+.header h2 {
+    font-size: 34px;
+    font-weight: 400;
+}
+
+.header p {
+    color: #777;
+    margin-top: 5px;
+}
+
+.admin {
+    font-size: 16px;
+}
+
+
+/* SUMMARY */
+
+.summary {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 20px;
+}
+
+.card {
+    min-height: 115px;
+
+    border: 1px solid #cfcfcf;
+    border-radius: 12px;
+
+    padding: 18px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.icon {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+
+    background: #f2e5e1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.card h3 {
+    font-size: 27px;
+    font-weight: 400;
+
+    margin-top: 5px;
+}
+
+
+/* TOOLBAR */
+
+.toolbar {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.toolbar input {
+    flex: 1;
+
+    height: 42px;
+
+    padding: 0 15px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.toolbar select {
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    background: white;
+
+    font-size: 14px;
+}
+
+.toolbar button {
+    height: 42px;
+
+    padding: 0 18px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+.reset {
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.add {
+    border: none;
+
+    background: #c58d84;
+    color: white;
+}
+
+
+/* TABLE */
+
+.incoming-area {
+    width: 100%;
+}
+
+.incoming-table {
+    border: 1px solid #cfcfcf;
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+
+    grid-template-columns:
+        1.2fr
+        1fr
+        1.5fr
+        0.8fr
+        1fr
+        1fr
+        0.8fr;
+
+    background: #fafafa;
+
+    border-bottom: 1px solid #eee;
+}
+
+.table-header span {
+    padding: 15px 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #666;
+}
+
+.incoming-row {
+    display: grid;
+
+    grid-template-columns:
+        1.2fr
+        1fr
+        1.5fr
+        0.8fr
+        1fr
+        1fr
+        0.8fr;
+
+    align-items: center;
+
+    border-bottom: 1px solid #eee;
+}
+
+.incoming-row > div {
+    padding: 15px 12px;
+
+    font-size: 14px;
+}
+
+.incoming-row > div strong {
+    display: block;
+}
+
+.incoming-row > div small {
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 12px;
+
+    color: #888;
+}
+
+.incoming-row:last-child {
+    border-bottom: none;
+}
+
+.aksi {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+.aksi button {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.aksi .edit {
+    background: white;
+
+    border: 1px solid #ccc;
+}
+
+.aksi .delete {
+    background: white;
+
+    border: 1px solid #ccc;
+}
+
+.empty {
+    height: 300px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #999;
+}
+
+.empty p {
+    font-size: 15px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .content {
+        margin-left: 220px;
+    }
+
+    .summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 750px) {
+
+    .sidebar {
+        position: relative;
+
+        width: 100%;
+        height: auto;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .toolbar {
+        flex-wrap: wrap;
+    }
+}
+
+.incoming-area {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    overflow: visible;
+}
+
+.incoming-table {
+    flex: 1;
+    min-width: 0;
+
+    border: 1px solid #aaa;
+    border-radius: 5px;
+
+    overflow: hidden;
+
+    transition: flex 0.35s ease;
+}
+
+.add-incoming-panel {
+    width: 0;
+
+    flex-shrink: 0;
+
+    opacity: 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: white;
+
+    transition:
+        width 0.35s ease,
+        opacity 0.25s ease,
+        padding 0.35s ease;
+}
+
+.add-incoming-panel.show {
+    width: 360px;
+
+    opacity: 1;
+
+    padding: 16px;
+
+    border: 1px solid #cfcfcf;
+}
+
+.panel-title {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.panel-title h2 {
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+
+    font-weight: normal;
+}
+
+.close-panel {
+    border: none;
+
+    background: none;
+
+    font-size: 26px;
+
+    cursor: pointer;
+
+    color: #777;
+}
+
+.add-incoming-panel form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.add-incoming-panel label {
+    font-size: 13px;
+
+    color: #444;
+
+    margin-top: 7px;
+}
+
+.add-incoming-panel input,
+.add-incoming-panel select,
+.add-incoming-panel textarea {
+    width: 100%;
+
+    padding: 10px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+    outline: none;
+
+    font-size: 13px;
+
+    background: white;
+}
+
+.add-incoming-panel textarea {
+    height: 75px;
+
+    resize: vertical;
+}
+
+.add-incoming-panel input:focus,
+.add-incoming-panel select:focus,
+.add-incoming-panel textarea:focus {
+    border-color: #c58d84;
+}
+
+.price-input {
+    display: flex;
+
+    align-items: center;
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+    overflow: hidden;
+}
+
+.price-input span {
+    padding: 10px;
+
+    background: #f5f5f5;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+.price-input input {
+    border: none;
+
+    border-radius: 0;
+}
+
+.form-buttons {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    padding: 10px 18px;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+.cancel {
+    background: white;
+
+    border: 1px solid #ccc;
+}
+
+.save {
+    background: #c58d84;
+
+    border: 1px solid #c58d84;
+
+    color: white;
+}
+
+.delete-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.delete-modal.show {
+    display: flex;
+}
+
+.delete-card {
+    width: 380px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+
+.delete-card h3 {
+    font-size: 21px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.delete-card p {
+    font-size: 14px;
+    color: #777;
+    line-height: 1.5;
+}
+
+.delete-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.cancel-delete,
+.confirm-delete {
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.cancel-delete {
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.confirm-delete {
+    background: #c58d84;
+    color: white;
+    border: 1px solid #c58d84;
+}

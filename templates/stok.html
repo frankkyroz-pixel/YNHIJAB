@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Barang - YN Hijab</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/stok.css') }}">
+</head>
+
+<body>
+
+   <!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        
+    </div>
+
+    <nav>
+        <a href="/dashboard">Home</a>
+        <a href="/produk">Produk</a>
+        <a href="/stok" class="active">Stok</a>
+        <a href="/pesanan">Pesanan</a>
+        <a href="/barang-masuk">Barang Masuk</a>
+        <a href="/barang-keluar">Barang Keluar</a>
+        <a href="/laporan">Laporan</a>
+    </nav>
+
+</aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <!-- HEADER -->
+        <header>
+            <div>
+                <h1>Stok Barang</h1>
+                <p>Kelola dan pantau stok produk YN Hijab</p>
+            </div>
+
+            <div class="admin">
+                🔔 👤 <strong>Admin</strong>
+            </div>
+        </header>
+
+
+        <!-- SUMMARY -->
+        <section class="summary">
+
+            <div class="card">
+                <div class="circle"></div>
+
+                <div>
+                    <p>Total Varian</p>
+                    <h2>{{ total_varian }}</h2>
+                    <small>Semua varian produk</small>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="circle"></div>
+
+                <div>
+                    <p>Total Stok</p>
+                    <h2>{{ total_stok }}</h2>
+                    <small>Jumlah seluruh stok</small>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="circle"></div>
+
+                <div>
+                    <p>Stok Menipis</p>
+                    <h2>{{ stok_menipis }}</h2>
+                    <small>Perlu diperhatikan</small>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+        <section class="toolbar">
+
+            <input
+                type="text"
+                id="searchStok"
+                placeholder="🔍 Cari produk, warna atau kode..."
+                oninput="searchStok()"
+            >
+
+            <select id="filterStok" onchange="filterStok()">
+                <option value="semua">Semua Status Stok</option>
+                <option value="aman">Stok Aman</option>
+                <option value="menipis">Stok Menipis</option>
+                <option value="habis">Stok Habis</option>
+            </select>
+
+            <button class="reset" onclick="resetFilter()">
+                Reset Filter
+            </button>
+
+        </section>
+
+
+        <!-- TABLE -->
+        <section class="stok-table">
+
+            <div class="table-header">
+
+                <span>Produk</span>
+                <span>Kode</span>
+                <span>Warna</span>
+                <span>Stok</span>
+                <span>Min. Stok</span>
+                <span>Rak</span>
+                <span>Status</span>
+
+            </div>
+
+
+            {% for item in stok %}
+
+            <div
+                class="stok-row"
+                data-stok="{{ item.stok }}"
+                data-minimum="{{ item.stok_minimum }}"
+            >
+
+                <div>
+                    <strong>{{ item.nama_produk }}</strong>
+                </div>
+
+                <div>
+                    {{ item.kode_produk }}
+                </div>
+
+                <div>
+                    {{ item.nama_warna }}
+                </div>
+
+                <div>
+                    <strong>{{ item.stok }}</strong>
+                </div>
+
+                <div>
+                    {{ item.stok_minimum }}
+                </div>
+
+                <div>
+                    <strong>{{ item.kode_rak }}</strong>
+                    <small>{{ item.nama_rak }}</small>
+                </div>
+
+                <div class="status"></div>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty">
+                Belum ada data stok.
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        function searchStok() {
+
+            const keyword =
+                document.getElementById("searchStok")
+                .value
+                .toLowerCase();
+
+            const rows =
+                document.querySelectorAll(".stok-row");
+
+            rows.forEach(row => {
+
+                const text =
+                    row.innerText.toLowerCase();
+
+                row.style.display =
+                    text.includes(keyword)
+                    ? "grid"
+                    : "none";
+
+            });
+
+        }
+
+
+        function filterStok() {
+
+            const filter =
+                document.getElementById("filterStok").value;
+
+            const rows =
+                document.querySelectorAll(".stok-row");
+
+            rows.forEach(row => {
+
+                const stok =
+                    Number(row.dataset.stok);
+
+                const minimum =
+                    Number(row.dataset.minimum);
+
+                let tampil = true;
+
+
+                if (filter === "aman") {
+                    tampil = stok > minimum;
+                }
+
+                if (filter === "menipis") {
+                    tampil =
+                        stok > 0 &&
+                        stok <= minimum;
+                }
+
+                if (filter === "habis") {
+                    tampil = stok === 0;
+                }
+
+
+                row.style.display =
+                    tampil ? "grid" : "none";
+
+            });
+
+        }
+
+
+        function resetFilter() {
+
+            document.getElementById("searchStok").value = "";
+
+            document.getElementById("filterStok").value = "semua";
+
+            document.querySelectorAll(".stok-row")
+                .forEach(row => {
+                    row.style.display = "grid";
+                });
+
+        }
+
+
+        /* STATUS STOK */
+
+        document.querySelectorAll(".stok-row")
+            .forEach(row => {
+
+                const stok =
+                    Number(row.dataset.stok);
+
+                const minimum =
+                    Number(row.dataset.minimum);
+
+                const status =
+                    row.querySelector(".status");
+
+
+                if (stok === 0) {
+
+                    status.innerHTML =
+                        '<span class="badge habis">Habis</span>';
+
+                } else if (stok <= minimum) {
+
+                    status.innerHTML =
+                        '<span class="badge menipis">Menipis</span>';
+
+                } else {
+
+                    status.innerHTML =
+                        '<span class="badge aman">Aman</span>';
+
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>

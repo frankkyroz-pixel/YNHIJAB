@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Barang Masuk - YN Hijab</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/barang_masuk.css') }}">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        
+    </div>
+
+        <nav>
+            <a href="/dashboard">Home</a>
+            <a href="/produk">Produk</a>
+            <a href="/stok">Stok</a>
+            <a href="/pesanan">Pesanan</a>
+            <a href="/barang-masuk" class="active">Barang Masuk</a>
+            <a href="/barang-keluar">Barang Keluar</a>
+            <a href="/laporan">Laporan</a>
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div>
+                <h2>Barang Masuk</h2>
+                <p>Kelola pencatatan barang yang masuk ke gudang</p>
+            </div>
+
+            <div class="admin">
+                🔔 &nbsp; 👤 Admin
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+        <section class="summary">
+
+            <div class="card">
+                <div class="icon">📦</div>
+
+                <div>
+                    <p>Total Barang Masuk</p>
+                    <h3>{{ total_barang_masuk }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">📥</div>
+
+                <div>
+                    <p>Barang Masuk Hari Ini</p>
+                    <h3>{{ barang_masuk_hari_ini }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">🧾</div>
+
+                <div>
+                    <p>Total Transaksi</p>
+                    <h3>{{ total_transaksi }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">💰</div>
+
+                <div>
+                    <p>Total Nilai Barang</p>
+                    <h3>Rp {{ "{:,.0f}".format(total_nilai_barang).replace(",",".") }}</h3>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+<section class="toolbar">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Cari nomor transaksi atau produk..."
+        oninput="filterBarangMasuk()">
+
+
+    <select
+        id="dateFilter"
+        onchange="filterBarangMasuk()">
+
+        <option value="all">Semua Tanggal</option>
+        <option value="today">Hari Ini</option>
+        <option value="7days">7 Hari Terakhir</option>
+        <option value="month">Bulan Ini</option>
+
+    </select>
+
+
+    <select
+        id="sortDate"
+        onchange="filterBarangMasuk()">
+
+        <option value="newest">
+            Terbaru
+        </option>
+
+        <option value="oldest">
+            Terlama
+        </option>
+
+    </select>
+
+
+    <button
+        class="reset"
+        type="button"
+        onclick="resetFilter()">
+        Reset Filter
+    </button>
+
+
+    <button
+        class="add"
+        type="button"
+        onclick="openIncomingPanel()">
+        ＋ Tambah Barang Masuk
+    </button>
+
+</section>
+
+
+        <!-- AREA BARANG MASUK -->
+        <section class="incoming-area">
+
+            <!-- TABEL -->
+            <div class="incoming-table">
+
+                <!-- HEADER TABEL -->
+                <div class="table-header">
+
+                    <span>No Transaksi</span>
+                    <span>Tanggal</span>
+                    <span>Produk</span>
+                    <span>Jumlah</span>
+                    <span>Harga</span>
+                    <span>Total</span>
+                    <span>Aksi</span>
+
+                </div>
+
+
+                <!-- DATA BARANG MASUK -->
+                {% for item in barang_masuk %}
+
+                <div class="incoming-row"
+                    data-search="{{ item.no_faktur }} {{ item.nama_produk}} {{ item.nama_warna }}"
+                    data-date="{{ item.tanggal }}">
+
+                    <!-- NO TRANSAKSI -->
+                    <div>
+                        <strong>{{ item.no_faktur }}</strong>
+                        <small>{{ item.nama_penjahit }}</small>
+                    </div>
+
+
+                    <!-- TANGGAL -->
+                    <div>
+                        {{ item.tanggal }}
+                    </div>
+
+
+                    <!-- PRODUK -->
+                    <div>
+                        <strong>{{ item.nama_produk }}</strong>
+                        <small>{{ item.nama_warna }}</small>
+                    </div>
+
+
+                    <!-- JUMLAH -->
+                    <div>
+                        {{ item.jumlah }}
+                    </div>
+
+
+                    <!-- HARGA -->
+                    <div>
+                        Rp {{ "{:,.0f}".format(item.total / item.jumlah) }}
+                    </div>
+
+
+                    <!-- TOTAL -->
+                    <div>
+                        Rp {{ "{:,.0f}".format(item.total) }}
+                    </div>
+
+
+                    <!-- AKSI -->
+                    <div class="aksi">
+
+                        <!-- EDIT -->
+                        <button
+                            type="button"
+                            class="edit"
+                            onclick="editIncoming(
+                                '{{ item.id_barang_masuk }}',
+                                '{{ item.no_faktur }}',
+                                '{{ item.nama_penjahit }}',
+                                '{{ item.tanggal }}',
+                                '{{ item.id_varian }}',
+                                '{{ item.jumlah }}',
+                                '{{ item.total / item.jumlah }}'
+                            )">
+                            ✎
+                        </button>
+
+
+                        <!-- DELETE -->
+                        <button
+                            type="button"
+                            class="delete"
+                            onclick="openDeleteModal('{{ item.id_barang_masuk }}')">
+                            🗑
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    <p>Belum ada data barang masuk</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- PANEL TAMBAH / EDIT BARANG MASUK -->
+            <div
+                class="add-incoming-panel"
+                id="addIncomingPanel">
+
+                <div class="panel-title">
+
+                    <h2 id="incomingFormTitle">
+                        Tambah Barang Masuk
+                    </h2>
+
+                    <button
+                        type="button"
+                        class="close-panel"
+                        onclick="closeIncomingPanel()">
+                        ×
+                    </button>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="/barang-masuk/tambah"
+                    id="incomingForm">
+
+                    <!-- NO TRANSAKSI -->
+                    <label>No. Transaksi</label>
+
+                    <input
+                        type="text"
+                        id="noTransaksi"
+                        value="Akan dibuat otomatis"
+                        readonly>
+
+
+                    <!-- NAMA PENJAHIT -->
+                    <label>Nama Penjahit</label>
+
+                    <input
+                        type="text"
+                        name="nama_penjahit"
+                        placeholder="Masukkan nama penjahit"
+                        required>
+
+
+                    <!-- TANGGAL -->
+                    <label>Tanggal</label>
+
+                    <input
+                        type="date"
+                        name="tanggal"
+                        required>
+
+
+                    <!-- PRODUK / VARIAN -->
+                    <label>Produk / Varian</label>
+
+                    <select
+                        name="id_varian"
+                        required>
+
+                        <option value="">
+                            Pilih produk
+                        </option>
+
+                        {% for item in varian %}
+
+                        <option value="{{ item.id_varian }}">
+                            {{ item.nama_produk }} - {{ item.nama_warna }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+                    <!-- JUMLAH -->
+                    <label>Jumlah</label>
+
+                    <input
+                        type="number"
+                        name="jumlah"
+                        min="1"
+                        placeholder="0"
+                        required>
+
+
+                    <!-- HARGA BELI -->
+                    <label>Harga Beli</label>
+
+                    <div class="price-input">
+
+                        <span>Rp.</span>
+
+                        <input
+                            type="number"
+                            name="harga_beli"
+                            min="0"
+                            placeholder="0"
+                            required>
+
+                    </div>
+
+
+                    <!-- KETERANGAN -->
+                    <label>Keterangan</label>
+
+                    <textarea
+                        name="keterangan"
+                        placeholder="Keterangan barang masuk..."></textarea>
+
+
+                    <!-- BUTTON -->
+                    <div class="form-buttons">
+
+                        <button
+                            type="button"
+                            class="cancel"
+                            onclick="closeIncomingPanel()">
+                            Batal
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="save"
+                            id="incomingSaveButton">
+                            Simpan
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+ <!-- ========================= -->
+ <!-- DELETE MODAL -->
+ <!-- ========================= -->
+
+    <div
+        class="delete-modal"
+        id="deleteModal">
+
+        <div class="delete-card">
+
+            <h3>
+                Hapus Barang Masuk?
+            </h3>
+
+            <p>
+                Data transaksi ini akan dihapus dan tidak dapat dikembalikan.
+            </p>
+
+            <div class="delete-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-delete"
+                    onclick="closeDeleteModal()">
+                    Batal
+                </button>
+
+
+                <form
+                    id="deleteForm"
+                    method="POST">
+
+                    <button
+                        type="submit"
+                        class="confirm-delete">
+                        Hapus
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================= -->
+
+    <script>
+
+ // =========================
+ // BUKA PANEL TAMBAH
+ // =========================
+
+       function openIncomingPanel() {
+
+    const panel =
+        document.getElementById("addIncomingPanel");
+
+    const form =
+        document.getElementById("incomingForm");
+
+    const title =
+        document.getElementById("incomingFormTitle");
+
+    const saveButton =
+        document.getElementById("incomingSaveButton");
+
+    const noTransaksi =
+        document.getElementById("noTransaksi");
+
+
+ // Reset semua isi form
+    form.reset();
+
+
+ // Kembalikan ke mode Tambah
+    form.action = "/barang-masuk/tambah";
+
+    title.textContent = "Tambah Barang Masuk";
+
+    saveButton.textContent = "Simpan";
+
+    noTransaksi.value = "Akan dibuat otomatis";
+
+
+ // Buka panel
+    panel.classList.add("show");
+}
+
+ // =========================
+ // TUTUP PANEL
+ // =========================
+
+        function closeIncomingPanel() {
+
+            const panel =
+                document.getElementById("addIncomingPanel");
+
+            panel.classList.remove("show");
+
+        }
+
+
+ // =========================
+ // EDIT BARANG MASUK
+ // =========================
+
+        function editIncoming(
+            id,
+            noFaktur,
+            namaPenjahit,
+            tanggal,
+            idVarian,
+            jumlah,
+            hargaBeli
+        ) {
+
+            const panel =
+                document.getElementById("addIncomingPanel");
+
+            const form =
+                document.getElementById("incomingForm");
+
+            const title =
+                document.getElementById("incomingFormTitle");
+
+            const saveButton =
+                document.getElementById("incomingSaveButton");
+
+            const noTransaksi =
+                document.getElementById("noTransaksi");
+
+
+            // Buka panel
+            panel.classList.add("show");
+
+
+            // Ubah action form
+            form.action =
+                "/barang-masuk/edit/" + id;
+
+
+            // Ubah judul
+            title.textContent =
+                "Edit Barang Masuk";
+
+
+            // Ubah tombol
+            saveButton.textContent =
+                "Update";
+
+
+            // Tampilkan nomor transaksi
+            noTransaksi.value =
+                noFaktur;
+
+
+            // Isi data
+            document.querySelector(
+                '[name="nama_penjahit"]'
+            ).value =
+                namaPenjahit;
+
+
+            document.querySelector(
+                '[name="tanggal"]'
+            ).value =
+                tanggal;
+
+
+            document.querySelector(
+                '[name="id_varian"]'
+            ).value =
+                idVarian;
+
+
+            document.querySelector(
+                '[name="jumlah"]'
+            ).value =
+                jumlah;
+
+
+            document.querySelector(
+                '[name="harga_beli"]'
+            ).value =
+                Math.round(hargaBeli);
+
+        }
+
+
+ // =========================
+ // BUKA DELETE MODAL
+ // =========================
+
+        function openDeleteModal(id) {
+
+            const modal =
+                document.getElementById("deleteModal");
+
+            const form =
+                document.getElementById("deleteForm");
+
+
+            form.action =
+                "/barang-masuk/hapus/" + id;
+
+
+            modal.classList.add("show");
+
+        }
+
+
+        // =========================
+        // TUTUP DELETE MODAL
+        // =========================
+
+        function closeDeleteModal() {
+
+            const modal =
+                document.getElementById("deleteModal");
+
+            modal.classList.remove("show");
+
+        }
+
+
+    function filterBarangMasuk() {
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const dateFilter =
+        document.getElementById("dateFilter")
+        .value;
+
+    const sortDate =
+        document.getElementById("sortDate")
+        .value;
+
+    const table =
+        document.querySelector(".incoming-table");
+
+    const rows =
+        Array.from(
+            table.querySelectorAll(".incoming-row")
+        );
+
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+
+    rows.forEach(row => {
+
+        const searchData =
+            row.dataset.search.toLowerCase();
+
+        const rowDate =
+            new Date(row.dataset.date);
+
+        rowDate.setHours(0, 0, 0, 0);
+
+
+        // SEARCH
+        const matchSearch =
+            searchData.includes(search);
+
+
+        // FILTER TANGGAL
+        let matchDate = true;
+
+
+        if (dateFilter === "today") {
+
+            matchDate =
+                rowDate.getTime() === today.getTime();
+
+        }
+
+
+        else if (dateFilter === "7days") {
+
+            const sevenDaysAgo =
+                new Date(today);
+
+            sevenDaysAgo.setDate(
+                today.getDate() - 6
+            );
+
+            matchDate =
+                rowDate >= sevenDaysAgo &&
+                rowDate <= today;
+
+        }
+
+
+        else if (dateFilter === "month") {
+
+            matchDate =
+                rowDate.getMonth() === today.getMonth() &&
+                rowDate.getFullYear() === today.getFullYear();
+
+        }
+
+
+        row.style.display =
+            matchSearch && matchDate
+                ? "grid"
+                : "none";
+
+    });
+
+
+    // URUTKAN TANGGAL
+    rows.sort((a, b) => {
+
+        const dateA =
+            new Date(a.dataset.date);
+
+        const dateB =
+            new Date(b.dataset.date);
+
+
+        if (sortDate === "newest") {
+
+            return dateB - dateA;
+
+        }
+
+        return dateA - dateB;
+
+    });
+
+
+    // Masukkan kembali row sesuai urutan
+    rows.forEach(row => {
+
+        table.appendChild(row);
+
+    });
+
+    }
+
+    function resetFilter() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("dateFilter").value ="all";
+        document.getElementById("sortDate").value ="newest";
+        filterBarangMasuk();
+    }
+
+    </script>
+
+</body>
+
+</html>

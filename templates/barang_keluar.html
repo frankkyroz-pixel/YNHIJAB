@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Barang Keluar - YN Hijab</title>
+
+    <!-- PENTING:
+         PAKAI CSS YANG SAMA DENGAN BARANG MASUK -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/barang_masuk.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        </div>
+
+        <nav>
+
+            <a href="/dashboard">Home</a>
+            <a href="/produk">Produk</a>
+            <a href="/stok">Stok</a>
+            <a href="/pesanan">Pesanan</a>
+            <a href="/barang-masuk">Barang Masuk</a>
+            <a href="/barang-keluar"class="active">Barang Keluar</a>
+            <a href="/laporan">Laporan</a>
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
+    <main class="content">
+
+                {% if request.args.get("error") %}
+
+        <div class="notif-error" id="notifError">
+
+            ⚠️
+            {{ request.args.get("error") }}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div>
+
+                <h2>
+                    Barang Keluar
+                </h2>
+
+                <p>
+                    Kelola pencatatan barang yang keluar dari gudang
+                </p>
+
+            </div>
+
+
+            <div class="admin">
+
+                🔔 &nbsp; 👤 Admin
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
+
+        <section class="summary">
+
+
+            <!-- TOTAL BARANG KELUAR -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Barang Keluar
+                    </p>
+
+                    <h3>
+                        {{ total_barang_keluar }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- HARI INI -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📤
+                </div>
+
+                <div>
+
+                    <p>
+                        Barang Keluar Hari Ini
+                    </p>
+
+                    <h3>
+                        {{ barang_keluar_hari_ini }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TOTAL TRANSAKSI -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🧾
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Transaksi
+                    </p>
+
+                    <h3>
+                        {{ total_transaksi_keluar }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- BARANG RUSAK -->
+
+            <div class="card">
+
+                <div class="icon">
+                    ⚠️
+                </div>
+
+                <div>
+
+                    <p>
+                        Barang Rusak
+                    </p>
+
+                    <h3>
+                        {{ barang_rusak }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             TOOLBAR
+        ========================== -->
+
+        <section class="toolbar">
+
+
+            <!-- SEARCH -->
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari produk atau warna..."
+                oninput="filterBarangKeluar()"
+            >
+
+
+
+            <!-- FILTER ALASAN -->
+
+            <select
+                id="alasanFilter"
+                onchange="filterBarangKeluar()"
+            >
+
+                <option value="all">
+                    Semua Alasan
+                </option>
+
+                <option value="Penjualan">
+                    Penjualan
+                </option>
+
+                <option value="Rusak">
+                    Rusak
+                </option>
+
+                <option value="Hilang">
+                    Hilang
+                </option>
+
+                <option value="Retur">
+                    Retur
+                </option>
+
+            </select>
+
+
+
+            <!-- FILTER TANGGAL -->
+
+            <select
+                id="dateFilter"
+                onchange="filterBarangKeluar()"
+            >
+
+                <option value="all">
+                    Semua Tanggal
+                </option>
+
+                <option value="today">
+                    Hari Ini
+                </option>
+
+                <option value="7days">
+                    7 Hari Terakhir
+                </option>
+
+                <option value="month">
+                    Bulan Ini
+                </option>
+
+            </select>
+
+
+
+            <!-- SORT -->
+
+            <select
+                id="sortDate"
+                onchange="filterBarangKeluar()"
+            >
+
+                <option value="newest">
+                    Terbaru
+                </option>
+
+                <option value="oldest">
+                    Terlama
+                </option>
+
+            </select>
+
+
+
+            <!-- RESET -->
+
+            <button
+                class="reset"
+                type="button"
+                onclick="resetFilter()"
+            >
+                Reset Filter
+            </button>
+
+
+
+            <!-- TAMBAH -->
+
+            <button
+                class="add"
+                type="button"
+                onclick="openOutgoingPanel()"
+            >
+                ＋ Barang Keluar
+            </button>
+
+        </section>
+
+
+
+        <!-- =========================
+             AREA BARANG KELUAR
+        ========================== -->
+
+        <section class="incoming-area">
+
+
+            <!-- TABEL -->
+
+            <div class="incoming-table">
+
+
+                <!-- HEADER TABEL -->
+
+                <div class="table-header">
+
+                    <span>
+                        No Transaksi
+                    </span>
+
+                    <span>
+                        Tanggal
+                    </span>
+
+                    <span>
+                        Produk
+                    </span>
+
+                    <span>
+                        Jumlah
+                    </span>
+
+                    <span>
+                        Alasan
+                    </span>
+
+                    <span>
+                        Keterangan
+                    </span>
+
+                    <span>
+                        Aksi
+                    </span>
+
+                </div>
+
+
+
+                <!-- DATA -->
+
+                {% for item in barang_keluar %}
+
+                <div
+                    class="incoming-row"
+
+                    data-search="
+                        {{ item.nama_produk }}
+                        {{ item.nama_warna }}
+                        {{ item.alasan }}
+                        {{ item.keterangan or '' }}
+                    "
+
+                    data-date="{{ item.tanggal }}"
+
+                    data-alasan="{{ item.alasan }}"
+                >
+
+
+                    <!-- NO TRANSAKSI -->
+
+                    <div>
+
+                        <strong>
+                            BK-{{ "%04d"|format(item.id_barang_keluar) }}
+                        </strong>
+
+                        <small>
+                            Barang Keluar
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- TANGGAL -->
+
+                    <div>
+
+                        {{ item.tanggal }}
+
+                    </div>
+
+
+
+                    <!-- PRODUK -->
+
+                    <div>
+
+                        <strong>
+                            {{ item.nama_produk }}
+                        </strong>
+
+                        <small>
+                            {{ item.nama_warna }}
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- JUMLAH -->
+
+                    <div>
+
+                        {{ item.jumlah }}
+
+                    </div>
+
+
+
+                    <!-- ALASAN -->
+
+                    <div>
+
+                        {{ item.alasan }}
+
+                    </div>
+
+
+
+                    <!-- KETERANGAN -->
+
+                    <div>
+
+                        {{ item.keterangan or '-' }}
+
+                    </div>
+
+
+
+                    <!-- AKSI -->
+
+                    <div class="aksi">
+
+
+                        <!-- EDIT -->
+
+                        <button
+                            type="button"
+                            class="edit"
+                            data-id="{{ item.id_barang_keluar }}"
+                            data-tanggal="{{ item.tanggal }}"
+                            data-varian="{{ item.id_varian }}"
+                            data-jumlah="{{ item.jumlah }}"
+                            data-alasan="{{ item.alasan }}"
+                            data-keterangan="{{ item.keterangan or '-' }}"
+                            onclick="editOutgoing(this)"
+                        >
+                            ✎
+                        </button>
+
+
+
+                        <!-- DELETE -->
+
+                        <button
+                            type="button"
+                            class="delete"
+
+                            onclick="openDeleteModal('{{ item.id_barang_keluar }}')">
+                            🗑
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty">
+
+                    <p>
+                        Belum ada data barang keluar
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- =========================
+                 PANEL TAMBAH / EDIT
+            ========================== -->
+
+            <div
+                class="add-incoming-panel"
+                id="addOutgoingPanel"
+            >
+
+
+                <div class="panel-title">
+
+                    <h2 id="outgoingFormTitle">
+                        Tambah Barang Keluar
+                    </h2>
+
+
+                    <button
+                        type="button"
+                        class="close-panel"
+                        onclick="closeOutgoingPanel()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- FORM -->
+
+                <form
+                    method="POST"
+                    action="/barang-keluar/tambah"
+                    id="outgoingForm"
+                >
+
+
+                    <!-- NO TRANSAKSI -->
+
+                    <label>
+                        No. Transaksi
+                    </label>
+
+                    <input
+                        type="text"
+                        id="noTransaksi"
+                        value="Akan dibuat otomatis"
+                        readonly
+                    >
+
+
+
+                    <!-- TANGGAL -->
+
+                    <label>
+                        Tanggal
+                    </label>
+
+                    <input
+                        type="date"
+                        name="tanggal"
+                        required
+                    >
+
+
+
+                    <!-- PRODUK -->
+
+                    <label>
+                        Produk / Varian
+                    </label>
+
+                    <select
+                        name="id_varian"
+                        required
+                    >
+
+                        <option value="">
+                            Pilih produk
+                        </option>
+
+
+                        {% for item in varian %}
+
+                        <option
+                            value="{{ item.id_varian }}"
+                        >
+                            {{ item.nama_produk }}
+                            -
+                            {{ item.nama_warna }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+
+
+                    <!-- JUMLAH -->
+
+                    <label>
+                        Jumlah
+                    </label>
+
+                    <input
+                        type="number"
+                        name="jumlah"
+                        min="1"
+                        placeholder="0"
+                        required
+                    >
+
+
+
+                    <!-- ALASAN -->
+
+                    <label>
+                        Alasan
+                    </label>
+
+                    <select
+                        name="alasan"
+                        required
+                    >
+
+                        <option value="">
+                            Pilih Alasan
+                        </option>
+
+                        <option value="Penjualan">
+                            Penjualan
+                        </option>
+
+                        <option value="Rusak">
+                            Rusak
+                        </option>
+
+                        <option value="Hilang">
+                            Hilang
+                        </option>
+
+                        <option value="Retur">
+                            Retur
+                        </option>
+
+                    </select>
+
+
+
+                    <!-- KETERANGAN -->
+
+                    <label>
+                        Keterangan
+                    </label>
+
+                    <textarea
+                        name="keterangan"
+                        placeholder="Keterangan barang keluar..."
+                    ></textarea>
+
+
+
+                    <!-- BUTTON -->
+
+                    <div class="form-buttons">
+
+
+                        <button
+                            type="button"
+                            class="cancel"
+                            onclick="closeOutgoingPanel()"
+                        >
+                            Batal
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="save"
+                            id="outgoingSaveButton"
+                        >
+                            Simpan
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         DELETE MODAL
+    ========================== -->
+
+    <div
+        class="delete-modal"
+        id="deleteModal"
+    >
+
+        <div class="delete-card">
+
+
+            <h3>
+                Hapus Barang Keluar?
+            </h3>
+
+
+            <p>
+                Data transaksi ini akan dihapus
+                dan stok akan dikembalikan.
+            </p>
+
+
+            <div class="delete-buttons">
+
+
+                <button
+                    type="button"
+                    class="cancel-delete"
+                    onclick="closeDeleteModal()"
+                >
+                    Batal
+                </button>
+
+
+                <form
+                    id="deleteForm"
+                    method="POST"
+                >
+
+                    <button
+                        type="submit"
+                        class="confirm-delete"
+                    >
+                        Hapus
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+
+        // =========================
+        // BUKA PANEL TAMBAH
+        // =========================
+
+        function openOutgoingPanel() {
+
+            const panel =
+                document.getElementById(
+                    "addOutgoingPanel"
+                );
+
+            const form =
+                document.getElementById(
+                    "outgoingForm"
+                );
+
+            const title =
+                document.getElementById(
+                    "outgoingFormTitle"
+                );
+
+            const saveButton =
+                document.getElementById(
+                    "outgoingSaveButton"
+                );
+
+            const noTransaksi =
+                document.getElementById(
+                    "noTransaksi"
+                );
+
+
+            // Reset form
+
+            form.reset();
+
+
+            // Mode tambah
+
+            form.action =
+                "/barang-keluar/tambah";
+
+
+            title.textContent =
+                "Tambah Barang Keluar";
+
+
+            saveButton.textContent =
+                "Simpan";
+
+
+            noTransaksi.value =
+                "Akan dibuat otomatis";
+
+
+            // Buka panel
+
+            panel.classList.add("show");
+
+        }
+
+
+
+        // =========================
+        // TUTUP PANEL
+        // =========================
+
+        function closeOutgoingPanel() {
+
+            const panel =
+                document.getElementById(
+                    "addOutgoingPanel"
+                );
+
+            panel.classList.remove("show");
+
+        }
+
+
+
+        // =========================
+        // EDIT BARANG KELUAR
+        // =========================
+
+        function editOutgoing(button) {
+
+    const id =
+        button.dataset.id;
+
+    const tanggal =
+        button.dataset.tanggal;
+
+    const idVarian =
+        button.dataset.varian;
+
+    const jumlah =
+        button.dataset.jumlah;
+
+    const alasan =
+        button.dataset.alasan;
+
+    const keterangan =
+        button.dataset.keterangan;
+
+
+    const panel =
+        document.getElementById(
+            "addOutgoingPanel"
+        );
+
+    const form =
+        document.getElementById(
+            "outgoingForm"
+        );
+
+    const title =
+        document.getElementById(
+            "outgoingFormTitle"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "outgoingSaveButton"
+        );
+
+    const noTransaksi =
+        document.getElementById(
+            "noTransaksi"
+        );
+
+
+    panel.classList.add("show");
+
+
+    form.action =
+        "/barang-keluar/edit/" + id;
+
+
+    title.textContent =
+        "Edit Barang Keluar";
+
+
+    saveButton.textContent =
+        "Update";
+
+
+    noTransaksi.value =
+        "BK-" +
+        String(id).padStart(4, "0");
+
+
+    document.querySelector(
+        '[name="tanggal"]'
+    ).value =
+        tanggal;
+
+
+    document.querySelector(
+        '[name="id_varian"]'
+    ).value =
+        idVarian;
+
+
+    document.querySelector(
+        '[name="jumlah"]'
+    ).value =
+        jumlah;
+
+
+    document.querySelector(
+        '[name="alasan"]'
+    ).value =
+        alasan;
+
+
+    document.querySelector(
+        '[name="keterangan"]'
+    ).value =
+        keterangan;
+
+}
+
+
+        // =========================
+        // DELETE MODAL
+        // =========================
+
+        function openDeleteModal(id) {
+
+            const modal =
+                document.getElementById(
+                    "deleteModal"
+                );
+
+            const form =
+                document.getElementById(
+                    "deleteForm"
+                );
+
+
+            form.action =
+                "/barang-keluar/hapus/" + id;
+
+
+            modal.classList.add("show");
+
+        }
+
+
+
+        // =========================
+        // TUTUP DELETE MODAL
+        // =========================
+
+        function closeDeleteModal() {
+
+            const modal =
+                document.getElementById(
+                    "deleteModal"
+                );
+
+            modal.classList.remove("show");
+
+        }
+
+
+
+        // =========================
+        // FILTER
+        // =========================
+
+        function filterBarangKeluar() {
+
+            const search =
+                document.getElementById(
+                    "searchInput"
+                ).value.toLowerCase();
+
+
+            const alasan =
+                document.getElementById(
+                    "alasanFilter"
+                ).value;
+
+
+            const dateFilter =
+                document.getElementById(
+                    "dateFilter"
+                ).value;
+
+
+            const sortDate =
+                document.getElementById(
+                    "sortDate"
+                ).value;
+
+
+            const table =
+                document.querySelector(
+                    ".incoming-table"
+                );
+
+
+            const rows =
+                Array.from(
+                    table.querySelectorAll(
+                        ".incoming-row"
+                    )
+                );
+
+
+            const today =
+                new Date();
+
+
+            today.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            rows.forEach(
+                row => {
+
+                    const searchData =
+                        row.dataset.search
+                            .toLowerCase();
+
+
+                    const rowAlasan =
+                        row.dataset.alasan;
+
+
+                    const rowDate =
+                        new Date(
+                            row.dataset.date
+                        );
+
+
+                    rowDate.setHours(
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+
+
+                    // SEARCH
+
+                    const matchSearch =
+                        searchData.includes(
+                            search
+                        );
+
+
+                    // ALASAN
+
+                    const matchAlasan =
+                        alasan === "all" ||
+                        rowAlasan === alasan;
+
+
+                    // TANGGAL
+
+                    let matchDate = true;
+
+
+                    if (
+                        dateFilter === "today"
+                    ) {
+
+                        matchDate =
+                            rowDate.getTime() ===
+                            today.getTime();
+
+                    }
+
+
+                    else if (
+                        dateFilter === "7days"
+                    ) {
+
+                        const sevenDaysAgo =
+                            new Date(today);
+
+
+                        sevenDaysAgo.setDate(
+                            today.getDate() - 6
+                        );
+
+
+                        matchDate =
+                            rowDate >=
+                                sevenDaysAgo &&
+                            rowDate <=
+                                today;
+
+                    }
+
+
+                    else if (
+                        dateFilter === "month"
+                    ) {
+
+                        matchDate =
+                            rowDate.getMonth() ===
+                                today.getMonth() &&
+
+                            rowDate.getFullYear() ===
+                                today.getFullYear();
+
+                    }
+
+
+                    row.style.display =
+                        matchSearch &&
+                        matchAlasan &&
+                        matchDate
+                            ? "grid"
+                            : "none";
+
+                }
+            );
+
+
+
+            // =========================
+            // SORT TANGGAL
+            // =========================
+
+            rows.sort(
+                (a, b) => {
+
+                    const dateA =
+                        new Date(
+                            a.dataset.date
+                        );
+
+
+                    const dateB =
+                        new Date(
+                            b.dataset.date
+                        );
+
+
+                    if (
+                        sortDate === "newest"
+                    ) {
+
+                        return dateB - dateA;
+
+                    }
+
+
+                    return dateA - dateB;
+
+                }
+            );
+
+
+
+            // Masukkan kembali
+
+            rows.forEach(
+                row => {
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+
+        // =========================
+        // RESET
+        // =========================
+
+        function resetFilter() {
+
+            document.getElementById(
+                "searchInput"
+            ).value = "";
+
+
+            document.getElementById(
+                "alasanFilter"
+            ).value = "all";
+
+
+            document.getElementById(
+                "dateFilter"
+            ).value = "all";
+
+
+            document.getElementById(
+                "sortDate"
+            ).value = "newest";
+
+
+            filterBarangKeluar();
+
+        }
+
+        setTimeout(function () {
+
+            const notif =document.getElementById("notifError");
+
+            if (notif) {
+                notif.remove();
+            }
+
+        }, 4000);
+
+    </script>
+
+        
+</body>
+
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - YN Hijab</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
+        
+    </div>
+
+        <nav>
+            <a href="/dashboard" class="active">Home</a>
+            <a href="/produk">Produk</a>
+            <a href="/stok">Stok</a>
+            <a href="/pesanan">Pesanan</a>
+            <a href="/barang-masuk">Barang Masuk</a>
+            <a href="/barang-keluar">Barang Keluar</a>
+            <a href="/laporan">Laporan</a>
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <header class="header">
+
+            <div>
+                <h2>Dashboard</h2>
+                <p>Selamat datang di sistem YN Hijab</p>
+            </div>
+
+            <div class="admin">
+                🔔 &nbsp; 👤 Admin
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY CARD -->
+        <section class="summary">
+
+            <div class="card">
+                <div class="icon">📦</div>
+
+                <div>
+                    <p>Total Produk</p>
+                    <h3 id="total-produk">{{ total_produk }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">📊</div>
+
+                <div>
+                    <p>Total Stok</p>
+                    <h3 id="total-stok">{{ total_stok }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">🛒</div>
+
+                <div>
+                    <p>Pesanan Hari Ini</p>
+                    <h3 id="pesanan-hari-ini">{{ pesanan_hari_ini }}</h3>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="icon">⚠️</div>
+
+                <div>
+                    <p>Stok Menipis</p>
+                    <h3 id="stok-menipis">{{ stok_menipis }}</h3>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- GRAFIK -->
+        <section class="dashboard-grid">
+
+            <div class="panel grafik">
+
+                <div class="panel-header">
+                    <h3>Grafik Penjualan</h3>
+
+                    <select id="periodeGrafik">
+                        <option value="7">7 Hari Terakhir</option>
+                        <option value="30">30 Hari Terakhir</option>
+                        <option value="90">3 Bulan Terakhir</option>
+                        <option value="365">1 Tahun Terakhir</option>
+                    </select>
+                </div>
+
+                <div class="chart">
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+            </div>
+
+
+            <!-- STOK MENIPIS -->
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>Stok Menipis</h3>
+                    <a href="/stok">Lihat Semua</a>
+                </div>
+
+                <div class="stock-list">
+
+                    {% if data_stok_menipis %}
+
+                    {% for item in data_stok_menipis %}
+
+                    <div class="stock-item">
+                        <span>
+                            {{ item.nama_produk }} - {{ item.nama_warna }}
+                        </span>
+
+                        <strong>
+                            {{ item.stok }}
+                        </strong>
+                    </div>
+
+                    {% endfor %}
+
+                    {% else %}
+                    <div class="stock-item">
+                        <span>Semua stok aman</span>
+                    </div>
+
+                    {% endif %}
+                </div>
+                
+
+            </div>
+
+        </section>
+
+
+        <!-- PESANAN TERBARU -->
+        <section class="panel">
+
+            <div class="panel-header">
+                <h3>Pesanan Terbaru</h3>
+
+                <a href="/pesanan">Lihat Semua</a>
+            </div>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>No Pesanan</th>
+                        <th>Tanggal</th>
+                        <th>Pelanggan</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+    {% if pesanan_terbaru %}
+
+        {% for pesanan in pesanan_terbaru %}
+
+        <tr>
+            <td>#{{ pesanan.id_pesanan }}</td>
+
+            <td>{{ pesanan.tanggal }}</td>
+
+            <td>{{ pesanan.nama_customor }}</td>
+
+            <td>
+                Rp {{ "{:,.0f}".format(pesanan.total_harga).replace(",", ".") }}
+            </td>
+
+            <td>{{ pesanan.STATUS }}</td>
+        </tr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <tr>
+            <td colspan="5" style="text-align: center;">
+                Belum ada pesanan
+            </td>
+        </tr>
+
+    {% endif %}
+
+</tbody>
+
+                
+
+            </table>
+
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script>
+    const ctx = document.getElementById("salesChart");
+
+    // DATA DARI FLASK
+    const data7Hari = {{ data_7_hari | tojson }};
+    const data30Hari = {{ data_30_hari | tojson }};
+    const data3Bulan = {{ data_3_bulan | tojson }};
+    const data1Tahun = {{ data_1_tahun | tojson }};
+
+    // FORMAT RUPIAH
+    function formatRupiah(angka) {
+        return "Rp " + Number(angka).toLocaleString("id-ID");
+    }
+
+    // NAMA BULAN
+    const namaBulan = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+    // =========================
+    // 7 HARI
+    // =========================
+    function buatData7Hari() {
+
+        const map = {};
+
+        data7Hari.forEach(item => {
+            map[item.tanggal] = Number(item.penjualan);
+        });
+
+        const labels = [];
+        const values = [];
+
+        const today = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+
+            const tanggal = new Date(today);
+            tanggal.setDate(today.getDate() - i);
+
+            const tahun = tanggal.getFullYear();
+            const bulan = String(tanggal.getMonth() + 1).padStart(2, "0");
+            const hari = String(tanggal.getDate()).padStart(2, "0");
+
+            const key = `${tahun}-${bulan}-${hari}`;
+
+            labels.push(`${hari}/${bulan}`);
+            values.push(map[key] || 0);
+        }
+
+        return {
+            labels: labels,
+            values: values
+        };
+    }
+
+
+    // =========================
+    // 30 HARI
+    // =========================
+    function buatData30Hari() {
+
+        const map = {};
+
+        data30Hari.forEach(item => {
+            map[item.tanggal] = Number(item.penjualan);
+        });
+
+        const labels = [];
+        const values = [];
+
+        const today = new Date();
+
+        for (let i = 29; i >= 0; i--) {
+
+            const tanggal = new Date(today);
+            tanggal.setDate(today.getDate() - i);
+
+            const tahun = tanggal.getFullYear();
+            const bulan = String(tanggal.getMonth() + 1).padStart(2, "0");
+            const hari = String(tanggal.getDate()).padStart(2, "0");
+
+            const key = `${tahun}-${bulan}-${hari}`;
+
+            labels.push(`${hari}/${bulan}`);
+            values.push(map[key] || 0);
+        }
+
+        return {
+            labels: labels,
+            values: values
+        };
+    }
+
+
+    // =========================
+    // DATA BULAN
+    // =========================
+    function buatDataBulan(data, jumlahBulan) {
+
+        const map = {};
+
+        data.forEach(item => {
+            map[item.bulan] = Number(item.penjualan);
+        });
+
+        const labels = [];
+        const values = [];
+
+        const today = new Date();
+
+        for (let i = jumlahBulan - 1; i >= 0; i--) {
+
+            const tanggal = new Date(
+                today.getFullYear(),
+                today.getMonth() - i,
+                1
+            );
+
+            const tahun = tanggal.getFullYear();
+            const bulan = String(tanggal.getMonth() + 1).padStart(2, "0");
+
+            const key = `${tahun}-${bulan}`;
+
+            labels.push(namaBulan[tanggal.getMonth()]);
+            values.push(map[key] || 0);
+        }
+
+        return {
+            labels: labels,
+            values: values
+        };
+    }
+
+
+    // =========================
+    // DATA AWAL
+    // =========================
+    const grafik7Hari = buatData7Hari();
+
+
+    const salesChart = new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+            labels: grafik7Hari.labels,
+
+            datasets: [{
+                label: "Penjualan",
+
+                data: grafik7Hari.values,
+
+                borderWidth: 3,
+
+                tension: 0.35,
+
+                pointRadius: 3,
+
+                pointHoverRadius: 6,
+
+                fill: false
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            },
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return formatRupiah(context.parsed.y);
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            if (value >= 1000000) {
+                                return "Rp " +
+                                    (value / 1000000).toLocaleString("id-ID") +
+                                    " jt";
+                            }
+
+                            if (value >= 1000) {
+                                return "Rp " +
+                                    (value / 1000).toLocaleString("id-ID") +
+                                    " rb";
+                            }
+
+                            return "Rp " +
+                                Number(value).toLocaleString("id-ID");
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+    // =========================
+    // DROPDOWN
+    // =========================
+    document
+        .getElementById("periodeGrafik")
+        .addEventListener("change", function() {
+
+            const periode = this.value;
+
+            let hasil;
+
+            if (periode === "7") {
+
+                hasil = buatData7Hari();
+
+            } else if (periode === "30") {
+
+                hasil = buatData30Hari();
+
+            } else if (periode === "90") {
+
+                hasil = buatDataBulan(data3Bulan, 3);
+
+            } else if (periode === "365") {
+
+                hasil = buatDataBulan(data1Tahun, 12);
+
+            }
+
+            salesChart.data.labels = hasil.labels;
+
+            salesChart.data.datasets[0].data = hasil.values;
+
+            salesChart.update();
+
+        });
+
+</script>
+
+
+    const salesChart = new Chart(ctx, {
+        type: "line",
+
+        data: {
+            labels: dataPenjualan[7].labels,
+
+            datasets: [{
+                label: "Penjualan",
+                data: dataPenjualan[7].data,
+
+                borderWidth: 2,
+                tension: 0.4,
+
+                pointRadius: 3,
+                pointHoverRadius: 6,
+
+                fill: true
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            },
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return " Rp " +
+                                context.parsed.y.toLocaleString("id-ID");
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        callback: function(value) {
+                            return "Rp " +
+                                (value / 1000000) +
+                                "jt";
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    // DROPDOWN
+    document.getElementById("periodeGrafik").addEventListener("change", function() {
+
+        const periode = this.value;
+
+        salesChart.data.labels = dataPenjualan[periode].labels;
+        salesChart.data.datasets[0].data = dataPenjualan[periode].data;
+
+        salesChart.update();
+    });
+</script>
+</body>
+</html>
+

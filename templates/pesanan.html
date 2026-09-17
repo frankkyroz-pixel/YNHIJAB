@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Pesanan - YN Hijab</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/pesanan.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="YN Hijab"
+            >
+
+        </div>
+
+
+        <nav>
+
+            <a href="/dashboard">
+                Home
+            </a>
+
+            <a href="/produk">
+                Produk
+            </a>
+
+            <a href="/stok">
+                Stok
+            </a>
+
+            <a
+                href="/pesanan"
+                class="active"
+            >
+                Pesanan
+            </a>
+
+            <a href="/barang-masuk">
+                Barang Masuk
+            </a>
+
+            <a href="/barang-keluar">
+                Barang Keluar
+            </a>
+
+            <a href="/laporan">
+                Laporan
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
+    <main class="content">
+
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <header class="header">
+
+            <div>
+
+                <h2>
+                    Pesanan
+                </h2>
+
+                <p>
+                    Kelola pesanan penjualan YN Hijab
+                </p>
+
+            </div>
+
+
+            <div class="admin">
+
+                🔔 &nbsp; 👤 Admin
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             SUMMARY
+        ========================== -->
+
+        <section class="summary">
+
+
+            <div class="card">
+
+                <div class="icon">
+                    🛒
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Pesanan
+                    </p>
+
+                    <h3>
+                        {{ ringkasan.total_pesanan }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <p>
+                        Menunggu
+                    </p>
+
+                    <h3>
+                        {{ ringkasan.menunggu }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <p>
+                        Selesai
+                    </p>
+
+                    <h3>
+                        {{ ringkasan.selesai }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    💰
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Penjualan
+                    </p>
+
+                    <h3>
+                        Rp {{ "{:,.0f}".format(ringkasan.total_penjualan or 0).replace(",", ".") }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             TOOLBAR
+        ========================== -->
+
+        <section class="toolbar">
+
+
+            <input
+                type="text"
+                id="searchPesanan"
+                placeholder="🔍 Cari nomor pesanan atau pelanggan..."
+            >
+
+
+            <select id="filterStatus">
+
+                <option value="">
+                    Semua Status
+                </option>
+
+                <option value="Menunggu">
+                    Menunggu
+                </option>
+
+                <option value="Diproses">
+                    Diproses
+                </option>
+
+                <option value="Siap Dipacking">
+                    Siap Dipacking
+                </option>
+
+                <option value="Dikirim">
+                    Dikirim
+                </option>
+
+                <option value="Selesai">
+                    Selesai
+                </option>
+
+                <option value="dibatalkan">
+                    Dibatalkan
+                </option>
+
+            </select>
+
+
+            <button
+                type="button"
+                class="reset"
+                onclick="resetFilter()"
+            >
+                Reset Filter
+            </button>
+
+
+            <button
+                type="button"
+                class="add"
+                onclick="openOrderPanel()"
+            >
+                ＋ Tambah Pesanan
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             TABLE PESANAN
+        ========================== -->
+
+        <section class="order-area">
+
+            <div class="order-table">
+
+
+                <div class="table-header">
+
+                    <span>
+                        No Pesanan
+                    </span>
+
+                    <span>
+                        Tanggal
+                    </span>
+
+                    <span>
+                        Pelanggan
+                    </span>
+
+                    <span>
+                        Total
+                    </span>
+
+                    <span>
+                        Status
+                    </span>
+
+                    <span>
+                        Aksi
+                    </span>
+
+                </div>
+
+
+
+                <div id="orderList">
+
+                    {% for item in pesanan %}
+
+                    <div
+                        class="order-row"
+                        data-status="{{ item.STATUS }}"
+                    >
+
+                        <span>
+                            #{{ item.no_pesanan }}
+                        </span>
+
+
+                        <span>
+                            {{ item.tanggal }}
+                        </span>
+
+
+                        <span>
+
+                            {{ item.nama_customor }}
+
+                            <small>
+                                {{ item.no_hp }}
+                            </small>
+
+                        </span>
+
+
+                        <span>
+
+                            Rp {{ "{:,.0f}".format(item.total_harga or 0).replace(",", ".") }}
+
+                        </span>
+
+
+                        <span>
+                            {{ item.STATUS }}
+                        </span>
+
+
+                        <span class="aksi">
+
+
+                            <!-- LIHAT -->
+
+                            <button
+                                type="button"
+                                onclick="lihatPesanan({{ item.id_pesanan }})"
+                            >
+                                👁
+                            </button>
+
+
+                            <!-- EDIT -->
+
+                            <button
+                                type="button"
+                                class="edit"
+                                onclick="editPesanan({{ item.id_pesanan }})"
+                            >
+                                ✎
+                            </button>
+
+
+                        </span>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+
+                        <p>
+                            Belum ada pesanan
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             POPUP DETAIL PESANAN
+        ================================================== -->
+
+        <div
+            class="detail-panel"
+            id="detailPanel"
+        >
+
+            <div class="detail-content">
+
+
+                <div class="detail-header">
+
+                    <h3 id="detailTitle">
+                        Detail Pesanan
+                    </h3>
+
+                    <button
+                        type="button"
+                        onclick="closeDetailPanel()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- INFO PESANAN -->
+
+                <div class="detail-info">
+
+
+                    <div>
+
+                        <p>
+                            No Pesanan
+                        </p>
+
+                        <strong id="detailId">
+                            -
+                        </strong>
+
+
+                        <p>
+                            Tanggal
+                        </p>
+
+                        <strong id="detailTanggal">
+                            -
+                        </strong>
+
+
+                        <p>
+                            Status
+                        </p>
+
+                        <strong id="detailStatus">
+                            -
+                        </strong>
+
+
+                        <p>
+                            Metode Pengambilan
+                        </p>
+
+                        <strong id="detailMetode">
+                            -
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <p>
+                            Nama Customer
+                        </p>
+
+                        <strong id="detailCustomer">
+                            -
+                        </strong>
+
+
+                        <p>
+                            No. HP
+                        </p>
+
+                        <strong id="detailHp">
+                            -
+                        </strong>
+
+
+                        <p>
+                            Alamat
+                        </p>
+
+                        <strong id="detailAlamat">
+                            -
+                        </strong>
+
+
+                        <p>
+                            Keterangan
+                        </p>
+
+                        <strong id="detailKeterangan">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- BARANG PESANAN -->
+
+                <div class="detail-items">
+
+                    <h4>
+                        Barang Pesanan
+                    </h4>
+
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    No
+                                </th>
+
+                                <th>
+                                    Produk / Varian
+                                </th>
+
+                                <th>
+                                    Harga
+                                </th>
+
+                                <th>
+                                    Jumlah
+                                </th>
+
+                                <th>
+                                    Subtotal
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="detailItems">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- TOTAL -->
+
+                <div class="detail-total">
+
+                    <span>
+                        Total Pesanan
+                    </span>
+
+                    <strong id="detailTotal">
+                        Rp 0
+                    </strong>
+
+                </div>
+
+
+
+                <button
+                    type="button"
+                    class="detail-close"
+                    onclick="closeDetailPanel()"
+                >
+                    Tutup
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             POPUP EDIT PESANAN
+        ================================================== -->
+
+        <div
+            class="detail-panel"
+            id="editPanel"
+        >
+
+            <div class="detail-content">
+
+
+                <!-- HEADER -->
+
+                <div class="detail-header">
+
+                    <h3>
+                        Edit Pesanan
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="close-edit"
+                        onclick="closeEditPanel()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- FORM EDIT -->
+
+                <form
+                    id="editForm"
+                    method="POST"
+                >
+
+
+                    <input
+                        type="hidden"
+                        id="editPesananId"
+                        name="id_pesanan"
+                    >
+
+
+
+                    <!-- =========================
+                         DATA CUSTOMER
+                    ========================== -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nama Customer
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editCustomer"
+                            name="nama_customer"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            No. HP
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="editHp"
+                            name="no_hp"
+                            maxlength="15"
+                            oninput="formatPhone(this)"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group full">
+
+                        <label>
+                            Alamat
+                        </label>
+
+                        <textarea
+                            id="editAlamat"
+                            name="alamat"
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         DATA PESANAN
+                    ========================== -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Tanggal
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="editTanggal"
+                            name="tanggal"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select
+                            id="editStatus"
+                            name="status"
+                        >
+
+                            <option value="Menunggu">
+                                Menunggu
+                            </option>
+
+                            <option value="Diproses">
+                                Diproses
+                            </option>
+
+                            <option value="Siap Dipacking">
+                                Siap Dipacking
+                            </option>
+
+                            <option value="Dikirim">
+                                Dikirim
+                            </option>
+
+                            <option value="Selesai">
+                                Selesai
+                            </option>
+
+                            <option value="dibatalkan">
+                                Dibatalkan
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Metode Pengambilan
+                        </label>
+
+                        <select
+                            id="editMetode"
+                            name="metode_pengambilan"
+                        >
+
+                            <option value="Diambil">
+                                Diambil
+                            </option>
+
+                            <option value="Dikirim">
+                                Dikirim
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         BARANG PESANAN
+                    ========================== -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Barang Pesanan
+                        </label>
+
+
+                        <div id="editItems">
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="add-item-edit"
+                            onclick="tambahItemEdit()"
+                        >
+                            ＋ Tambah Barang
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         TOTAL
+                    ========================== -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Total Harga
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editTotalDisplay"
+                            readonly
+                        >
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         KETERANGAN
+                    ========================== -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            id="editKeterangan"
+                            name="keterangan"
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         SIMPAN
+                    ========================== -->
+
+                    <button
+                        type="submit"
+                        class="save-edit"
+                    >
+                        Simpan Perubahan
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             POPUP TAMBAH PESANAN
+        ================================================== -->
+
+        <div
+            class="order-panel"
+            id="orderPanel"
+        >
+
+            <div class="panel-content">
+
+
+                <!-- HEADER -->
+
+                <div class="panel-header">
+
+                    <h3 id="orderFormTitle">
+                        Tambah Pesanan
+                    </h3>
+
+
+                    <button
+                        type="button"
+                        onclick="closeOrderPanel()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- FORM -->
+
+                <form
+                    action="/pesanan/tambah"
+                    method="POST"
+                    id="orderForm"
+                >
+
+
+                    <!-- NAMA CUSTOMER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nama Customer
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nama_customer"
+                            placeholder="Masukkan nama customer"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- NO HP -->
+
+                    <div class="form-group">
+
+                        <label>
+                            No. HP
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="no_hp"
+                            placeholder="08xx-xxxx-xxxx"
+                            maxlength="15"
+                            oninput="formatPhone(this)"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- ALAMAT -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Alamat
+                        </label>
+
+                        <textarea
+                            name="alamat"
+                            placeholder="Masukkan alamat"
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- TANGGAL -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Tanggal
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            name="tanggal"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select name="status">
+
+                            <option value="Menunggu">
+                                Menunggu
+                            </option>
+
+                            <option value="Diproses">
+                                Diproses
+                            </option>
+
+                            <option value="Siap Dipacking">
+                                Siap Dipacking
+                            </option>
+
+                            <option value="Dikirim">
+                                Dikirim
+                            </option>
+
+                            <option value="Selesai">
+                                Selesai
+                            </option>
+
+                            <option value="dibatalkan">
+                                Dibatalkan
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- METODE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Metode Pengambilan
+                        </label>
+
+                        <select name="metode_pengambilan">
+
+                            <option value="Diambil">
+                                Diambil
+                            </option>
+
+                            <option value="Dikirim">
+                                Dikirim
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- TOTAL HIDDEN -->
+
+                    <input
+                        type="hidden"
+                        name="total_harga"
+                        id="totalHarga"
+                        value="0"
+                    >
+
+
+
+                    <!-- =========================
+                         BARANG PESANAN
+                    ========================== -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Barang Pesanan
+                        </label>
+
+
+                        <div id="orderItems">
+
+
+                            <!-- BARANG PERTAMA -->
+
+                            <div class="order-item">
+
+
+                                <!-- PRODUK -->
+
+                                <select
+                                    name="id_varian[]"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Pilih produk / varian
+                                    </option>
+
+
+                                    {% for item in varian %}
+
+                                    <option
+                                        value="{{ item.id_varian }}"
+                                        data-harga="{{ item.harga_jual }}"
+                                        data-stok="{{ item.stok or 0 }}"
+                                    >
+
+                                        {{ item.nama_produk }}
+                                        -
+                                        {{ item.nama_warna }}
+
+                                        (Stok:
+                                        {{ item.stok or 0 }})
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+
+                                <!-- JUMLAH -->
+
+                                <input
+                                    type="number"
+                                    name="jumlah[]"
+                                    min="1"
+                                    value="1"
+                                    placeholder="Jumlah"
+                                    required
+                                >
+
+
+
+                                <!-- HARGA -->
+
+                                <input
+                                    type="number"
+                                    name="harga_jual[]"
+                                    placeholder="Harga"
+                                    readonly
+                                >
+
+
+
+                                <!-- SUBTOTAL -->
+
+                                <input
+                                    type="number"
+                                    name="subtotal[]"
+                                    placeholder="Subtotal"
+                                    readonly
+                                >
+
+
+
+                                <!-- HAPUS -->
+
+                                <button
+                                    type="button"
+                                    onclick="removeOrderItem(this)"
+                                >
+                                    ×
+                                </button>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- TAMBAH BARANG -->
+
+                        <button
+                            type="button"
+                            class="add-item"
+                            onclick="addOrderItem()"
+                        >
+                            ＋ Tambah Barang
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- KETERANGAN -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            name="keterangan"
+                            placeholder="Keterangan tambahan"
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- SIMPAN -->
+
+                    <button
+                        type="submit"
+                        id="orderSaveButton"
+                    >
+                        Simpan Pesanan
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script>
+
+
+        /* =================================================
+           TAMBAH PESANAN
+        ================================================== */
+
+        function openOrderPanel() {
+
+            const panel =
+                document.getElementById("orderPanel");
+
+            const form =
+                document.getElementById("orderForm");
+
+
+            form.reset();
+
+
+            form.action =
+                "/pesanan/tambah";
+
+
+            document
+                .getElementById("orderFormTitle")
+                .textContent =
+                "Tambah Pesanan";
+
+
+            document
+                .getElementById("orderSaveButton")
+                .textContent =
+                "Simpan Pesanan";
+
+
+            document
+                .getElementById("totalHarga")
+                .value =
+                0;
+
+
+            panel
+                .classList
+                .add("show");
+
+        }
+
+
+
+        function closeOrderPanel() {
+
+            document
+                .getElementById("orderPanel")
+                .classList
+                .remove("show");
+
+        }
+
+
+
+        /* =================================================
+           TOTAL PESANAN BARU
+        ================================================== */
+
+        function updateTotalHarga() {
+
+            let total = 0;
+
+
+            const subtotals =
+                document.querySelectorAll(
+                    '#orderItems input[name="subtotal[]"]'
+                );
+
+
+            subtotals.forEach(function(input) {
+
+                total +=
+                    Number(input.value || 0);
+
+            });
+
+
+            document
+                .getElementById("totalHarga")
+                .value =
+                total;
+
+        }
+
+
+
+        /* =================================================
+           UPDATE ITEM PESANAN BARU
+        ================================================== */
+
+        function updateOrderItem(item) {
+
+            const select =
+                item.querySelector(
+                    'select[name="id_varian[]"]'
+                );
+
+
+            const jumlah =
+                item.querySelector(
+                    'input[name="jumlah[]"]'
+                );
+
+
+            if (!select || !jumlah) {
+                return;
+            }
+
+
+            const option =
+                select.options[
+                    select.selectedIndex
+                ];
+
+
+            if (!option) {
+                return;
+            }
+
+
+            const harga =
+                Number(
+                    option.dataset.harga || 0
+                );
+
+
+            const qty =
+                Number(
+                    jumlah.value || 0
+                );
+
+
+            const stok =
+                Number(
+                    option.dataset.stok || 0
+                );
+
+
+            if (
+                stok > 0 &&
+                qty > stok
+            ) {
+
+                jumlah.value =
+                    stok;
+
+            }
+
+
+            const finalQty =
+                Number(
+                    jumlah.value || 0
+                );
+
+
+            const subtotal =
+                harga * finalQty;
+
+
+            item.querySelector(
+                'input[name="harga_jual[]"]'
+            ).value =
+                harga;
+
+
+            item.querySelector(
+                'input[name="subtotal[]"]'
+            ).value =
+                subtotal;
+
+
+            updateTotalHarga();
+
+        }
+
+
+
+        /* =================================================
+           EVENT PRODUK
+        ================================================== */
+
+        document.addEventListener(
+            "change",
+            function(event) {
+
+                if (
+                    event.target.matches(
+                        '#orderItems select[name="id_varian[]"]'
+                    )
+                ) {
+
+                    const item =
+                        event.target.closest(
+                            ".order-item"
+                        );
+
+
+                    updateOrderItem(item);
+
+                }
+
+            }
+        );
+
+
+
+        /* =================================================
+           EVENT JUMLAH
+        ================================================== */
+
+        document.addEventListener(
+            "input",
+            function(event) {
+
+                if (
+                    event.target.matches(
+                        '#orderItems input[name="jumlah[]"]'
+                    )
+                ) {
+
+                    const item =
+                        event.target.closest(
+                            ".order-item"
+                        );
+
+
+                    updateOrderItem(item);
+
+                }
+
+            }
+        );
+
+
+
+        /* =================================================
+           TAMBAH ITEM PESANAN BARU
+        ================================================== */
+
+        function addOrderItem() {
+
+            const container =
+                document.getElementById(
+                    "orderItems"
+                );
+
+
+            const firstItem =
+                container.querySelector(
+                    ".order-item"
+                );
+
+
+            if (!firstItem) {
+                return;
+            }
+
+
+            const newItem =
+                firstItem.cloneNode(true);
+
+
+            newItem.querySelector(
+                'select[name="id_varian[]"]'
+            ).value =
+                "";
+
+
+            newItem.querySelector(
+                'input[name="jumlah[]"]'
+            ).value =
+                1;
+
+
+            newItem.querySelector(
+                'input[name="harga_jual[]"]'
+            ).value =
+                "";
+
+
+            newItem.querySelector(
+                'input[name="subtotal[]"]'
+            ).value =
+                "";
+
+
+            container.appendChild(
+                newItem
+            );
+
+
+            updateTotalHarga();
+
+        }
+
+
+
+        /* =================================================
+           HAPUS ITEM PESANAN BARU
+        ================================================== */
+
+        function removeOrderItem(button) {
+
+            const container =
+                document.getElementById(
+                    "orderItems"
+                );
+
+
+            const items =
+                container.querySelectorAll(
+                    ".order-item"
+                );
+
+
+            if (
+                items.length > 1
+            ) {
+
+                button
+                    .closest(".order-item")
+                    .remove();
+
+            }
+
+
+            updateTotalHarga();
+
+        }
+
+
+
+        /* =================================================
+           FORMAT NO HP
+        ================================================== */
+
+        function formatPhone(input) {
+
+            let angka =
+                input.value.replace(
+                    /\D/g,
+                    ""
+                );
+
+
+            if (
+                angka.length > 4 &&
+                angka.length <= 8
+            ) {
+
+                angka =
+                    angka.substring(0, 4) +
+                    "-" +
+                    angka.substring(4);
+
+            }
+
+
+            else if (
+                angka.length > 8
+            ) {
+
+                angka =
+                    angka.substring(0, 4) +
+                    "-" +
+                    angka.substring(4, 8) +
+                    "-" +
+                    angka.substring(8, 13);
+
+            }
+
+
+            input.value =
+                angka;
+
+        }
+
+
+
+        /* =================================================
+           SEARCH + FILTER
+        ================================================== */
+
+        const searchInput =
+            document.getElementById(
+                "searchPesanan"
+            );
+
+
+        const filterStatus =
+            document.getElementById(
+                "filterStatus"
+            );
+
+
+
+        function filterPesanan() {
+
+            const keyword =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+
+            const status =
+                filterStatus.value;
+
+
+            const rows =
+                document.querySelectorAll(
+                    "#orderList .order-row"
+                );
+
+
+            rows.forEach(function(row) {
+
+                const text =
+                    row.textContent
+                        .toLowerCase();
+
+
+                const rowStatus =
+                    row.dataset.status;
+
+
+                const cocokSearch =
+                    text.includes(
+                        keyword
+                    );
+
+
+                const cocokStatus =
+                    status === "" ||
+                    rowStatus === status;
+
+
+                if (
+                    cocokSearch &&
+                    cocokStatus
+                ) {
+
+                    row.style.display =
+                        "";
+
+                }
+
+                else {
+
+                    row.style.display =
+                        "none";
+
+                }
+
+            });
+
+        }
+
+
+
+        searchInput.addEventListener(
+            "input",
+            filterPesanan
+        );
+
+
+        filterStatus.addEventListener(
+            "change",
+            filterPesanan
+        );
+
+
+
+        /* =================================================
+           RESET FILTER
+        ================================================== */
+
+        function resetFilter() {
+
+            searchInput.value =
+                "";
+
+            filterStatus.value =
+                "";
+
+            filterPesanan();
+
+        }
+
+
+
+        /* =================================================
+           LIHAT DETAIL PESANAN
+        ================================================== */
+
+        function lihatPesanan(id) {
+
+            fetch(
+                "/pesanan/detail/" + id
+            )
+
+            .then(function(response) {
+
+                return response.json();
+
+            })
+
+            .then(function(data) {
+
+                if (data.error) {
+
+                    alert(
+                        data.error
+                    );
+
+                    return;
+
+                }
+
+
+                const pesanan =
+                    data.pesanan;
+
+                const detail =
+                    data.detail;
+
+
+
+                /* =========================
+                   DATA UTAMA
+                ========================== */
+
+                document
+                    .getElementById(
+                        "detailTitle"
+                    )
+                    .textContent =
+                    "Detail Pesanan #" +
+                    pesanan.no_pesanan;
+
+
+                document
+                    .getElementById(
+                        "detailId"
+                    )
+                    .textContent =
+                    "#" +
+                    pesanan.no_pesanan;
+
+
+                document
+                    .getElementById(
+                        "detailTanggal"
+                    )
+                    .textContent =
+                    pesanan.tanggal;
+
+
+                document
+                    .getElementById(
+                        "detailStatus"
+                    )
+                    .textContent =
+                    pesanan.STATUS;
+
+
+                document
+                    .getElementById(
+                        "detailMetode"
+                    )
+                    .textContent =
+                    pesanan.metode_pengambilan;
+
+
+                document
+                    .getElementById(
+                        "detailCustomer"
+                    )
+                    .textContent =
+                    pesanan.nama_customor;
+
+
+                document
+                    .getElementById(
+                        "detailHp"
+                    )
+                    .textContent =
+                    pesanan.no_hp;
+
+
+                document
+                    .getElementById(
+                        "detailAlamat"
+                    )
+                    .textContent =
+                    pesanan.alamat ||
+                    "-";
+
+
+                document
+                    .getElementById(
+                        "detailKeterangan"
+                    )
+                    .textContent =
+                    pesanan.keterangan ||
+                    "-";
+
+
+
+                /* =========================
+                   TOTAL
+                ========================== */
+
+                document
+                    .getElementById(
+                        "detailTotal"
+                    )
+                    .textContent =
+                    formatRupiah(
+                        pesanan.total_harga
+                    );
+
+
+
+                /* =========================
+                   BARANG
+                ========================== */
+
+                const container =
+                    document.getElementById(
+                        "detailItems"
+                    );
+
+
+                container.innerHTML =
+                    "";
+
+
+
+                detail.forEach(
+                    function(item, index) {
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                ${index + 1}
+                            </td>
+
+                            <td>
+                                ${item.nama_produk}
+                                -
+                                ${item.nama_warna}
+                            </td>
+
+                            <td>
+                                ${formatRupiah(
+                                    item.harga_jual
+                                )}
+                            </td>
+
+                            <td>
+                                ${item.jumlah_pesanan}
+                            </td>
+
+                            <td>
+                                ${formatRupiah(
+                                    item.subtotal
+                                )}
+                            </td>
+
+                        `;
+
+
+                        container.appendChild(
+                            row
+                        );
+
+                    }
+                );
+
+
+
+                /* =========================
+                   BUKA POPUP
+                ========================== */
+
+                document
+                    .getElementById(
+                        "detailPanel"
+                    )
+                    .classList
+                    .add("show");
+
+            })
+
+            .catch(function(error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "Gagal mengambil detail pesanan."
+                );
+
+            });
+
+        }
+
+
+
+        function closeDetailPanel() {
+
+            document
+                .getElementById(
+                    "detailPanel"
+                )
+                .classList
+                .remove("show");
+
+        }
+
+
+
+        function formatRupiah(angka) {
+
+            return "Rp " +
+                Number(
+                    angka || 0
+                ).toLocaleString(
+                    "id-ID"
+                );
+
+        }
+
+
+
+        /* =================================================
+           EDIT PESANAN
+        ================================================== */
+
+        let varianEdit = [];
+
+
+
+        function editPesanan(id) {
+
+            Promise.all([
+
+                fetch(
+                    "/pesanan/detail/" + id
+                )
+                    .then(
+                        response =>
+                            response.json()
+                    ),
+
+                fetch(
+                    "/pesanan/varian-edit"
+                )
+                    .then(
+                        response =>
+                            response.json()
+                    )
+
+            ])
+
+            .then(
+                function([
+                    dataPesanan,
+                    dataVarian
+                ]) {
+
+
+                    if (
+                        dataPesanan.error
+                    ) {
+
+                        alert(
+                            dataPesanan.error
+                        );
+
+                        return;
+
+                    }
+
+
+                    const pesanan =
+                        dataPesanan.pesanan;
+
+
+                    const detail =
+                        dataPesanan.detail;
+
+
+                    varianEdit =
+                        dataVarian;
+
+
+
+                    /* =========================
+                       DATA UTAMA
+                    ========================== */
+
+                    document
+                        .getElementById(
+                            "editPesananId"
+                        )
+                        .value =
+                        pesanan.id_pesanan;
+
+
+                    document
+                        .getElementById(
+                            "editCustomer"
+                        )
+                        .value =
+                        pesanan.nama_customor ||
+                        "";
+
+
+                    document
+                        .getElementById(
+                            "editHp"
+                        )
+                        .value =
+                        pesanan.no_hp ||
+                        "";
+
+
+                    document
+                        .getElementById(
+                            "editAlamat"
+                        )
+                        .value =
+                        pesanan.alamat ||
+                        "";
+
+
+                    document
+                        .getElementById(
+                            "editTanggal"
+                        )
+                        .value =
+                        pesanan.tanggal_edit ||
+                        "";
+
+
+                    document
+                        .getElementById(
+                            "editStatus"
+                        )
+                        .value =
+                        pesanan.STATUS ||
+                        "Menunggu";
+
+
+                    document
+                        .getElementById(
+                            "editMetode"
+                        )
+                        .value =
+                        pesanan.metode_pengambilan ||
+                        "Diambil";
+
+
+                    document
+                        .getElementById(
+                            "editKeterangan"
+                        )
+                        .value =
+                        pesanan.keterangan ||
+                        "";
+
+
+
+                    /* =========================
+                       ACTION FORM
+                    ========================== */
+
+                    document
+                        .getElementById(
+                            "editForm"
+                        )
+                        .action =
+                        "/pesanan/edit/" +
+                        pesanan.id_pesanan;
+
+
+
+                    /* =========================
+                       BARANG LAMA
+                    ========================== */
+
+                    const container =
+                        document.getElementById(
+                            "editItems"
+                        );
+
+
+                    container.innerHTML =
+                        "";
+
+
+
+                    detail.forEach(
+                        function(item) {
+
+                            tambahItemEdit(
+                                item.id_varian,
+                                item.jumlah_pesanan,
+                                item.harga_jual
+                            );
+
+                        }
+                    );
+
+
+
+                    hitungTotalEdit();
+
+
+
+                    /* =========================
+                       BUKA POPUP
+                    ========================== */
+
+                    document
+                        .getElementById(
+                            "editPanel"
+                        )
+                        .classList
+                        .add("show");
+
+                }
+            )
+
+            .catch(
+                function(error) {
+
+                    console.error(
+                        error
+                    );
+
+                    alert(
+                        "Gagal mengambil data pesanan."
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* =================================================
+           TUTUP EDIT
+        ================================================== */
+
+        function closeEditPanel() {
+
+            document
+                .getElementById(
+                    "editPanel"
+                )
+                .classList
+                .remove("show");
+
+        }
+
+
+
+        /* =================================================
+           TAMBAH BARANG EDIT
+        ================================================== */
+
+        function tambahItemEdit(
+            idVarian = "",
+            jumlah = 1,
+            harga = 0
+        ) {
+
+            const container =
+                document.getElementById(
+                    "editItems"
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "edit-item";
+
+
+
+            let options =
+                "";
+
+
+
+            varianEdit.forEach(
+                function(item) {
+
+                    const selected =
+                        String(
+                            item.id_varian
+                        ) ===
+                        String(
+                            idVarian
+                        )
+                            ? "selected"
+                            : "";
+
+
+                   options += `
+
+    <option
+        value="${item.id_varian}"
+        data-harga="${item.harga_jual}"
+        data-stok="${item.stok || 0}"
+        ${selected}
+    >
+        ${item.nama_produk}
+        -
+        ${item.nama_warna}
+        (Stok: ${item.stok || 0})
+    </option>
+
+`;
+                }
+            );
+
+
+
+            row.innerHTML = `
+
+                <select
+                    name="id_varian[]"
+                    class="edit-varian"
+                    onchange="hitungTotalEdit()"
+                    required
+                >
+
+                    <option value="">
+                        Pilih Produk
+                    </option>
+
+                    ${options}
+
+                </select>
+
+
+                <input
+                    type="number"
+                    name="jumlah[]"
+                    class="edit-jumlah"
+                    value="${jumlah}"
+                    min="1"
+                    onchange="hitungTotalEdit()"
+                    oninput="hitungTotalEdit()"
+                    required
+                >
+
+
+                <button
+                    type="button"
+                    class="hapus-item-edit"
+                    onclick="hapusItemEdit(this)"
+                >
+                    ×
+                </button>
+
+            `;
+
+
+            container.appendChild(
+                row
+            );
+
+        }
+
+
+
+        /* =================================================
+           HAPUS BARANG EDIT
+        ================================================== */
+
+        function hapusItemEdit(
+            button
+        ) {
+
+            const item =
+                button.closest(
+                    ".edit-item"
+                );
+
+
+            if (item) {
+
+                item.remove();
+
+            }
+
+
+            hitungTotalEdit();
+
+        }
+
+
+
+        /* =================================================
+           HITUNG TOTAL EDIT
+        ================================================== */
+
+      function hitungTotalEdit() {
+
+    let total = 0;
+
+    document
+        .querySelectorAll("#editItems .edit-item")
+        .forEach(function(row) {
+
+            const select =
+                row.querySelector(".edit-varian");
+
+            const jumlahInput =
+                row.querySelector(".edit-jumlah");
+
+            if (
+                !select ||
+                !jumlahInput
+            ) {
+                return;
+            }
+
+            const option =
+                select.options[
+                    select.selectedIndex
+                ];
+
+            const harga =
+                parseFloat(
+                    option?.dataset.harga || 0
+                );
+
+            const jumlah =
+                parseInt(
+                    jumlahInput.value
+                ) || 0;
+
+            total += harga * jumlah;
+
+        });
+
+    document
+        .getElementById("editTotalDisplay")
+        .value =
+        "Rp " +
+        total.toLocaleString("id-ID");
+}
+
+        /* =================================================
+           SUBMIT PESANAN BARU
+        ================================================== */
+
+        document
+            .getElementById(
+                "orderForm"
+            )
+            .addEventListener(
+                "submit",
+                function() {
+
+                    updateTotalHarga();
+
+                }
+            );
+
+
+    </script>
+
+
+</body>
+
+</html>
