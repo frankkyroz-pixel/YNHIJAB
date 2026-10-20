@@ -1,500 +1,427 @@
 /* =========================================================
-   RESET
-========================================================= */
+   YN HIJAB - TEMA DUSTY PINK
+   ========================================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    --primary: #D58A94;          /* dusty pink asli */
+    --primary-dark: #C4727E;     /* hover */
+    --primary-light: #E8B4BB;
+    --primary-text: #B5606C;     /* untuk teks/ikon pink di atas putih agar tetap terbaca */
+
+    --sidebar: #D58A94;
+    --sidebar-dark: #CC7C87;
+    --sidebar-text: #FFFFFF;
+    --sidebar-active: #FFFFFF;
+
+    --background: #FCF6F7;
+    --card: #FFFFFF;
+    --surface: #FDF8F8;
+
+    --text-primary: #4A3338;
+    --text-secondary: #85696F;
+    --text-muted: #AE9CA0;
+
+    --border: #F0E2E4;
+
+    --pink-light: #FAEBED;
+    --pink-soft: #F5D9DD;
+
+    --success: #4E9A7B;
+    --warning: #D39A3F;
+    --danger: #C0504D;
+
+    --success-bg: #E5F3EC;
+    --warning-bg: #FBF0DC;
+    --danger-bg: #F9E3E1;
+
+    --shadow: 0 3px 10px rgba(74, 51, 56, 0.07);
 }
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; overflow: hidden; }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #ffffff;
-    color: #222;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
 }
 
 
 /* =========================================================
    SIDEBAR
-========================================================= */
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
+   ========================================================= */
 
 .sidebar {
     position: fixed;
-    top: 0;
     left: 0;
-    width: 265px;
+    top: 0;
+    width: 220px;
     height: 100vh;
-    background: #f2e5e1;
+    background: linear-gradient(180deg, var(--sidebar), var(--sidebar-dark));
+    overflow: hidden;
 }
 
 .logo {
-    height: 205px;
+    height: 175px;
     text-align: center;
-    padding-top: 0;
+    padding-top: 4px;
+    position: relative;
+    z-index: 2;
 }
 
 .logo img {
-    width: 170px;
-    height: 170px;
+    width: 150px;
+    height: 150px;
     object-fit: contain;
     display: block;
-    margin: 0 auto 5px;
+    margin: 0 auto -8px;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25));
 }
 
 .logo p {
     font-family: Georgia, serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: #9c5d55;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
     margin: 0;
 }
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
 
 nav {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
 }
 
 nav a {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     width: 100%;
-    height: 54px;
-    padding: 16px 55px;
-
+    height: 40px;
+    padding: 0 26px;
     text-decoration: none;
-    color: #111;
-
-    font-family: Arial, sans-serif;
-    font-size: 16px;
+    color: var(--sidebar-text);
+    font-size: 14px;
     font-weight: 400;
-    line-height: 22px;
-
     background: transparent;
-
-    transition: background 0.2s ease;
+    transition: 0.2s;
 }
 
-nav a:hover {
-    background: rgba(255, 255, 255, 0.45);
+nav a svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
+
+nav a:hover { background: rgba(255, 255, 255, 0.12); }
 
 nav a.active {
-    background: #ffffff;
+    background: var(--sidebar-active);
+    color: var(--primary-text);
+    font-weight: 600;
 }
+
 
 /* =========================================================
    CONTENT
-========================================================= */
+   ========================================================= */
 
 .content {
-    margin-left: 265px;
-
-    width: calc(100% - 265px);
-    min-height: 100vh;
-
-    padding: 30px 35px;
+    margin-left: 220px;
+    height: 100vh;
+    width: calc(100% - 220px);
+    padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
+
+.content > * { min-height: 0; }
 
 
 /* =========================================================
    HEADER
-========================================================= */
+   ========================================================= */
 
-header {
+.header, header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-
-    margin-bottom: 28px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-shrink: 0;
 }
 
-header h1 {
-    font-family: Arial, sans-serif;
-    font-size: 34px;
-    font-weight: 400;
-
-    margin-bottom: 6px;
+.header h2, header h1, header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
-header p {
-    color: #777;
-    font-size: 14px;
+.header p, header p {
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-size: 12px;
 }
 
 .admin {
-    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
 
-    font-size: 16px;
+.admin-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--primary-light), var(--primary-dark));
+    box-shadow: 0 3px 8px rgba(197, 114, 126, 0.35);
+    border: 2px solid #FFFFFF;
+}
+
+.admin-avatar svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 
 /* =========================================================
    SUMMARY CARDS
-========================================================= */
+   ========================================================= */
 
 .summary {
     display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 18px;
-
-    margin-bottom: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-shrink: 0;
 }
 
 .card {
-    min-height: 115px;
-
-    padding: 18px;
-
-    border: 1px solid #cfcfcf;
+    min-height: 78px;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 12px;
-
-    background: #ffffff;
-
+    padding: 12px;
     display: flex;
     align-items: center;
-
-    gap: 18px;
+    gap: 10px;
+    box-shadow: var(--shadow);
 }
 
-.circle {
-    width: 60px;
-    height: 60px;
-
+.icon {
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #f2e5e1;
+    background: none;      /* lingkaran pink dihapus */
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.card p {
-    margin-bottom: 5px;
-
-    color: #666;
-
-    font-size: 14px;
+.icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* logo tampil utuh, tidak terpotong */
+    display: block;
 }
 
-.card h2 {
-    font-size: 30px;
-    font-weight: 400;
+.card p { font-size: 11px; color: var(--text-secondary); }
 
-    margin-bottom: 4px;
+.card h2, .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+    color: var(--text-primary);
 }
 
-.card small {
-    color: #999;
+.card small { font-size: 10px; color: var(--text-muted); }
 
-    font-size: 11px;
-}
+
+/* =========================================================
+   SUMMARY (3 kartu)
+   ========================================================= */
+
+.summary { grid-template-columns: repeat(3, 1fr); }
 
 
 /* =========================================================
    TOOLBAR
-========================================================= */
+   ========================================================= */
 
 .toolbar {
     display: flex;
     align-items: center;
-
     gap: 12px;
-
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .toolbar input {
     flex: 1;
-
-    height: 42px;
-
-    padding: 0 15px;
-
-    border: 1px solid #ccc;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
     border-radius: 6px;
-
+    color: var(--text-primary);
     font-size: 14px;
 }
 
-.toolbar input:focus {
-    outline: none;
-    border-color: #c58d84;
-}
+.toolbar input:focus,
+.toolbar select:focus { outline: none; border-color: var(--primary); }
 
 .toolbar select {
-    height: 42px;
-
+    height: 34px;
     padding: 0 12px;
-
-    border: 1px solid #ccc;
+    border: 1px solid var(--border);
     border-radius: 6px;
-
     background: white;
-
+    color: var(--text-primary);
     font-size: 14px;
 }
 
 .toolbar button {
-    height: 42px;
-
-    padding: 0 18px;
-
+    height: 34px;
+    padding: 0 14px;
     border-radius: 6px;
-
     cursor: pointer;
-
     font-size: 14px;
 }
 
-.reset {
-    border: 1px solid #ccc;
-    background: white;
-}
+.reset { border: 1px solid var(--border); background: white; color: var(--text-secondary); }
+.reset:hover { background: var(--pink-light); }
 
 
 /* =========================================================
-   STOCK TABLE
-========================================================= */
+   TABEL STOK
+   ========================================================= */
 
 .stok-table {
     width: 100%;
-
-    overflow: hidden;
-
-    border: 1px solid #cfcfcf;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    border: 1px solid var(--border);
     border-radius: 8px;
-
     background: #ffffff;
 }
 
-
-/* =========================================================
-   TABLE HEADER
-========================================================= */
-
-.table-header {
-    display: grid;
-
-    grid-template-columns:
-        1.7fr
-        1fr
-        1fr
-        0.7fr
-        0.8fr
-        1.3fr
-        0.9fr;
-
-    align-items: center;
-
-    min-height: 55px;
-
-    padding: 0 20px;
-
-    border-bottom: 1px solid #eee;
-
-    background: #fafafa;
-
-    color: #666;
-
-    font-size: 14px;
-    font-weight: 500;
-}
-
-
-/* =========================================================
-   STOCK ROW
-========================================================= */
-
+.table-header,
 .stok-row {
     display: grid;
-
-    grid-template-columns:
-        1.7fr
-        1fr
-        1fr
-        0.7fr
-        0.8fr
-        1.3fr
-        0.9fr;
-
+    grid-template-columns: 1.7fr 1fr 1fr 0.7fr 0.8fr 1.3fr 0.9fr;
     align-items: center;
+    padding: 0 14px;
+}
 
-    min-height: 70px;
-
-    padding: 0 20px;
-
-    border-bottom: 1px solid #eee;
-
-    background: #ffffff;
-
+.table-header {
+    min-height: 44px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
     font-size: 14px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 
+.stok-row {
+    min-height: 52px;
+    border-bottom: 1px solid var(--border);
+    background: #ffffff;
+    font-size: 14px;
     transition: background 0.2s ease;
 }
 
-.stok-row:last-child {
-    border-bottom: none;
-}
+.stok-row:last-child { border-bottom: none; }
 
-.stok-row:hover {
-    background: #fafafa;
-}
+.stok-row:hover { background: var(--surface); }
 
-.stok-row strong {
-    color: #333;
-}
+.stok-row strong { color: var(--text-primary); }
 
 .stok-row small {
     display: block;
-
     margin-top: 3px;
-
-    color: #999;
-
+    color: var(--text-muted);
     font-size: 11px;
 }
 
 
 /* =========================================================
-   STATUS BADGE
-========================================================= */
+   BADGE STATUS
+   ========================================================= */
 
 .badge {
     display: inline-block;
     min-width: 85px;
-    padding: 8px 14px;
+    padding: 7px 14px;
     border-radius: 20px;
     text-align: center;
     font-size: 13px;
     font-weight: 500;
 }
 
-.badge.aman {
-    background: #edf6ed;
-    color: #548054;
-}
-
-.badge.menipis {
-    background: #fff4df;
-    color: #a06b18;
-}
-
-.badge.habis {
-    background: #fce9e9;
-    color: #a34c4c;
-}
-
-
-/* =========================================================
-   EMPTY DATA
-========================================================= */
+.badge.aman     { background: var(--success-bg); color: var(--success); }
+.badge.menipis  { background: var(--warning-bg); color: var(--warning); }
+.badge.habis    { background: var(--danger-bg);  color: var(--danger); }
 
 .empty {
     padding: 50px 20px;
-
     text-align: center;
-
-    color: #999;
-
+    color: var(--text-muted);
     font-size: 14px;
 }
 
 
 /* =========================================================
-   RESPONSIVE — TABLET
-========================================================= */
+   RESPONSIVE
+   ========================================================= */
 
 @media (max-width: 1100px) {
-
-    .sidebar {
-        width: 220px;
-    }
-
-    .content {
-        margin-left: 220px;
-
-        width: calc(100% - 220px);
-
-        padding: 25px;
-    }
-
-    .summary {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .toolbar {
-        flex-wrap: wrap;
-    }
-
-    .toolbar input {
-        flex-basis: 100%;
-    }
+    .content { padding: 25px; }
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .toolbar { flex-wrap: wrap; }
+    .toolbar input { flex-basis: 100%; }
 }
 
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-========================================================= */
-
 @media (max-width: 750px) {
-
-    .sidebar {
-        position: relative;
-
-        width: 100%;
-        height: auto;
-    }
-
-    .content {
-        margin-left: 0;
-
-        width: 100%;
-
-        padding: 25px 20px;
-    }
-
-    .summary {
-        grid-template-columns: 1fr;
-    }
-
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-
-        gap: 10px;
-    }
-
-    header h1 {
-        font-size: 28px;
-    }
-
-    .toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .toolbar input,
-    .toolbar select,
-    .toolbar button {
-        width: 100%;
-    }
-
-    .stok-table {
-        overflow-x: auto;
-    }
-
-    .table-header,
-    .stok-row {
-        min-width: 900px;
-    }
+    html, body { overflow: auto; }
+    .sidebar { position: relative; width: 100%; height: auto; }
+    .content { height: auto; margin-left: 0; width: 100%; padding: 25px 20px; }
+    .summary { grid-template-columns: 1fr; }
+    header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    header h1 { font-size: 28px; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar input, .toolbar select, .toolbar button { width: 100%; }
+    .stok-table { overflow-x: auto; }
+    .table-header, .stok-row { min-width: 900px; }
 }

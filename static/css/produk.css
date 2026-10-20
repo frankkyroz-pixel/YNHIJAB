@@ -1,925 +1,707 @@
 /* =========================================================
-   RESET
-========================================================= */
+   YN HIJAB - TEMA DUSTY PINK
+   ========================================================= */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+:root {
+    --primary: #D58A94;          /* dusty pink asli */
+    --primary-dark: #C4727E;     /* hover */
+    --primary-light: #E8B4BB;
+    --primary-text: #B5606C;     /* untuk teks/ikon pink di atas putih agar tetap terbaca */
+
+    --sidebar: #D58A94;
+    --sidebar-dark: #CC7C87;
+    --sidebar-text: #FFFFFF;
+    --sidebar-active: #FFFFFF;
+
+    --background: #FCF6F7;
+    --card: #FFFFFF;
+    --surface: #FDF8F8;
+
+    --text-primary: #4A3338;
+    --text-secondary: #85696F;
+    --text-muted: #AE9CA0;
+
+    --border: #F0E2E4;
+
+    --pink-light: #FAEBED;
+    --pink-soft: #F5D9DD;
+
+    --success: #4E9A7B;
+    --warning: #D39A3F;
+    --danger: #C0504D;
+
+    --success-bg: #E5F3EC;
+    --warning-bg: #FBF0DC;
+    --danger-bg: #F9E3E1;
+
+    --shadow: 0 3px 10px rgba(74, 51, 56, 0.07);
 }
 
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; overflow: hidden; }
+
 body {
-    font-family: Arial, sans-serif;
-    background: #ffffff;
-    color: #222;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
 }
 
 
 /* =========================================================
    SIDEBAR
-========================================================= */
+   ========================================================= */
 
 .sidebar {
     position: fixed;
-    top: 0;
     left: 0;
-
-    width: 265px;
+    top: 0;
+    width: 220px;
     height: 100vh;
-
-    background: #f2e5e1;
+    background: linear-gradient(180deg, var(--sidebar), var(--sidebar-dark));
+    overflow: hidden;
 }
 
 .logo {
-    height: 205px;
-
+    height: 175px;
     text-align: center;
-    padding-top: 0;
+    padding-top: 4px;
+    position: relative;
+    z-index: 2;
 }
 
 .logo img {
-    width: 170px;
-    height: 170px;
-
+    width: 150px;
+    height: 150px;
     object-fit: contain;
     display: block;
-
-    margin: 0 auto 5px;
+    margin: 0 auto -8px;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25));
 }
 
 .logo p {
     font-family: Georgia, serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-
-    color: #9c5d55;
-
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
     margin: 0;
 }
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
 
 nav {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
 }
 
 nav a {
-    display: block;
-
+    display: flex;
+    align-items: center;
+    gap: 12px;
     width: 100%;
-    height: 54px;
-
-    padding: 16px 55px;
-
+    height: 40px;
+    padding: 0 26px;
     text-decoration: none;
-    color: #111;
-
-    font-family: Arial, sans-serif;
-    font-size: 16px;
+    color: var(--sidebar-text);
+    font-size: 14px;
     font-weight: 400;
-    line-height: 22px;
-
-    transition: background 0.2s ease;
+    background: transparent;
+    transition: 0.2s;
 }
 
-nav a:hover,
+nav a svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+nav a:hover { background: rgba(255, 255, 255, 0.12); }
+
 nav a.active {
-    background: #ffffff;
+    background: var(--sidebar-active);
+    color: var(--primary-text);
+    font-weight: 600;
 }
 
 
 /* =========================================================
    CONTENT
-========================================================= */
+   ========================================================= */
 
 .content {
-    margin-left: 265px;
-
-    width: calc(100% - 265px);
-    min-height: 100vh;
-
-    padding: 30px 35px;
+    margin-left: 220px;
+    height: 100vh;
+    width: calc(100% - 220px);
+    padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
+
+.content > * { min-height: 0; }
 
 
 /* =========================================================
    HEADER
-========================================================= */
+   ========================================================= */
 
-header {
+.header, header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    margin-bottom: 28px;
+    margin-bottom: 14px;
+    flex-shrink: 0;
 }
 
-header h1 {
-    font-size: 34px;
-    font-weight: 400;
+.header h2, header h1, header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.header p, header p {
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-size: 12px;
 }
 
 .admin {
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.admin-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--primary-light), var(--primary-dark));
+    box-shadow: 0 3px 8px rgba(197, 114, 126, 0.35);
+    border: 2px solid #FFFFFF;
+}
+
+.admin-avatar svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 
 /* =========================================================
-   SUMMARY
-========================================================= */
+   SUMMARY CARDS
+   ========================================================= */
 
 .summary {
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
-    gap: 18px;
-
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-shrink: 0;
 }
 
 .card {
-    min-height: 115px;
-
-    padding: 18px;
-
-    border: 1px solid #cfcfcf;
+    min-height: 78px;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 12px;
-
-    background: #ffffff;
-
+    padding: 12px;
     display: flex;
     align-items: center;
-
-    gap: 18px;
+    gap: 10px;
+    box-shadow: var(--shadow);
 }
 
-.circle {
-    width: 60px;
-    height: 60px;
-
+.icon {
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
-
-    background: #f2e5e1;
-
-    border-radius: 50%;
+    background: none;      /* lingkaran pink dihapus */
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.card p {
-    font-size: 14px;
-    color: #666;
-
-    margin-bottom: 3px;
+.icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* logo tampil utuh, tidak terpotong */
+    display: block;
 }
 
-.card h2 {
-    font-size: 30px;
-    font-weight: 400;
+.card p { font-size: 11px; color: var(--text-secondary); }
+
+.card h2, .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+    color: var(--text-primary);
 }
 
-.card small {
-    font-size: 11px;
-    color: #777;
-}
+.card small { font-size: 10px; color: var(--text-muted); }
 
 
 /* =========================================================
    TOOLBAR
-========================================================= */
+   ========================================================= */
 
 .toolbar {
     display: flex;
     align-items: center;
-
     gap: 16px;
-
     padding: 8px;
-
     margin-bottom: 12px;
-
-    border: 1px solid #cfcfcf;
+    border: 1px solid var(--border);
     border-radius: 6px;
-
     background: #ffffff;
+    flex-shrink: 0;
 }
 
 .toolbar input,
 .toolbar select {
-    height: 38px;
-
+    height: 34px;
     padding: 0 12px;
-
-    border: 1px solid #bbb;
+    border: 1px solid var(--border);
     border-radius: 4px;
-
     background: #ffffff;
-
-    font-family: Arial, sans-serif;
+    color: var(--text-primary);
+    font-family: inherit;
     font-size: 14px;
 }
 
-.toolbar input {
-    width: 265px;
-}
+.toolbar input:focus,
+.toolbar select:focus { outline: none; border-color: var(--primary); }
 
-.toolbar select {
-    width: 170px;
-}
+.toolbar input { width: 265px; }
 
-
-/* =========================================================
-   RESET FILTER
-========================================================= */
+.toolbar select { width: 170px; }
 
 .reset {
-    height: 38px;
-
+    height: 34px;
     padding: 0 14px;
-
     margin-left: -12px;
-
-    border: 1px solid #bbb;
+    border: 1px solid var(--border);
     border-radius: 4px;
-
     background: #ffffff;
-    color: #333;
-
+    color: var(--text-primary);
     cursor: pointer;
-
-    font-family: Arial, sans-serif;
+    font-family: inherit;
     font-size: 14px;
-
     transition: background 0.2s ease;
 }
 
-.reset:hover {
-    background: #f5f5f5;
-}
-
-
-/* =========================================================
-   TAMBAH PRODUK
-========================================================= */
+.reset:hover { background: var(--pink-light); }
 
 .add {
-    height: 38px;
-
-    padding: 0 20px;
-
+    height: 34px;
+    padding: 0 14px;
     margin-left: auto;
-
-    border: 1px solid #9c5d55;
+    border: 1px solid var(--primary);
     border-radius: 5px;
-
-    background: #c58d84;
+    background: var(--primary);
     color: #ffffff;
-
     cursor: pointer;
-
-    font-family: Arial, sans-serif;
+    font-family: inherit;
     font-size: 14px;
-
     transition: background 0.2s ease;
 }
 
-.add:hover {
-    background: #b57970;
-}
+.add:hover { background: var(--primary-dark); }
 
 
 /* =========================================================
-   PRODUCT AREA
-========================================================= */
+   TABEL PRODUK
+   ========================================================= */
 
 .product-area {
     display: flex;
-    align-items: flex-start;
-
+    align-items: stretch;
     gap: 12px;
-
-    overflow: visible;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
-
-
-/* =========================================================
-   PRODUCT TABLE
-========================================================= */
 
 .product-table {
     flex: 1;
-
     min-width: 0;
-
-    border: 1px solid #cfcfcf;
+    border: 1px solid var(--border);
     border-radius: 8px;
-
-    overflow: hidden;
-
-    background: #ffffff;
-
+    overflow-y: auto;
+    background: var(--card);
     transition: flex 0.35s ease;
 }
 
 .table-header,
 .product-row {
     display: grid;
-
-    grid-template-columns:
-        80px
-        1.5fr
-        1fr
-        1fr
-        0.8fr
-        0.6fr
-        0.6fr
-        90px;
-
+    grid-template-columns: 80px 1.5fr 1fr 1fr 0.8fr 0.6fr 0.6fr 90px;
     align-items: center;
 }
 
 .table-header {
-    min-height: 55px;
-
-    padding: 0 20px;
-
-    background: #fafafa;
-
-    color: #666;
-
-    font-size: 14px;
-    font-weight: 500;
+    min-height: 40px;
+    padding: 0 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .product-row {
-    min-height: 82px;
-
-    padding: 8px 20px;
-
-    border-top: 1px solid #eee;
-
-    font-size: 14px;
+    min-height: 56px;
+    padding: 6px 14px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    transition: background 0.2s ease;
 }
 
-.product-row:hover {
-    background: #fafafa;
-}
+.product-row:hover { background: var(--surface); }
+
+.product-row strong { color: var(--text-primary); }
 
 .product-row small {
     display: block;
-
     margin-top: 3px;
-
-    color: #999;
-
+    color: var(--text-muted);
     font-size: 11px;
 }
 
-
-/* =========================================================
-   FOTO PRODUK
-========================================================= */
-
 .foto {
-    width: 80px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     border-radius: 7px;
-    background: #f7f7f7;
-    border: 1px solid #eee;
-    color: #999;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
     font-size: 13px;
 }
 
 .foto img {
-    width: 100%;
-    height: 100%;
+    width: 55px;
+    height: 55px;
     object-fit: cover;
     display: block;
     border-radius: 7px;
 }
 
-/* =========================================================
-   AKSI PRODUK
-========================================================= */
-
-.aksi {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-}
+.aksi { display: flex; align-items: center; gap: 8px; }
 
 .aksi button {
     width: 28px;
     height: 28px;
-
     border: none;
-
     cursor: pointer;
-
-    border-radius: 3px;
+    border-radius: 5px;
+    transition: 0.2s;
 }
 
-.aksi button:first-child {
-    background: #ff3045;
-    color: #ffffff;
-}
+.aksi button:first-child { background: var(--danger); color: #ffffff; }
+.aksi button:first-child:hover { background: #A94442; }
 
-.aksi button:last-child {
-    background: #00e94b;
-    color: #ffffff;
-}
+.aksi button:last-child { background: var(--primary); color: #ffffff; }
+.aksi button:last-child:hover { background: var(--primary-dark); }
 
 
 /* =========================================================
-   PANEL TAMBAH PRODUK
-========================================================= */
+   PANEL TAMBAH / EDIT PRODUK
+   ========================================================= */
 
 .add-product-panel {
     position: fixed;
-
     top: 0;
     right: 0;
-
     width: 380px;
     height: 100vh;
-
     padding: 25px;
-
-    box-sizing: border-box;
-
     overflow-y: auto;
-
     z-index: 1000;
-
     display: none;
-
     background: #ffffff;
-
-    border-left: 1px solid #ddd;
+    border-left: 1px solid var(--border);
+    box-shadow: -8px 0 24px rgba(74, 51, 56, 0.08);
 }
 
-.add-product-panel.show {
-    display: block;
-}
-
-
-/* =========================================================
-   PANEL TITLE
-========================================================= */
+.add-product-panel.show { display: block; }
 
 .panel-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 22px;
 }
 
 .panel-title h2 {
     font-size: 22px;
     font-weight: 400;
+    color: var(--text-primary);
 }
 
 .close-panel {
     border: none;
-
     background: none;
-
-    color: #222;
-
+    color: var(--text-primary);
     font-size: 30px;
-
     cursor: pointer;
 }
 
+.close-panel:hover { color: var(--primary-text); }
 
-/* =========================================================
-   FORM TAMBAH PRODUK
-========================================================= */
+.add-product-panel form { display: flex; flex-direction: column; gap: 7px; }
 
-.add-product-panel form {
-    display: flex;
-    flex-direction: column;
-
-    gap: 7px;
-}
-
-.add-product-panel form label {
+.add-product-panel label {
     margin-top: 5px;
-
-    font-size: 15px;
+    font-size: 14px;
+    color: var(--text-secondary);
 }
 
 .add-product-panel input,
 .add-product-panel select {
     width: 100%;
-    height: 38px;
-
+    height: 34px;
     padding: 0 10px;
-
-    border: 1px solid #ccc;
+    border: 1px solid var(--border);
     border-radius: 4px;
-
     background: #ffffff;
-
-    font-family: Arial, sans-serif;
+    color: var(--text-primary);
+    font-family: inherit;
     font-size: 14px;
 }
 
+.add-product-panel input[type="file"] { padding: 5px 10px; height: auto; }
 
-/* =========================================================
-   WARNA
-========================================================= */
-
-.color-options {
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 8px;
-
-    margin-top: 3px;
-}
-
-.color-options label {
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    font-size: 13px;
-}
-
-.color-options input {
-    width: 17px;
-    height: 17px;
+.add-product-panel input:focus,
+.add-product-panel select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(213, 138, 148, 0.12);
 }
 
 .add-color {
     width: fit-content;
-
     padding: 5px 8px;
-
     border: none;
     border-radius: 3px;
-
-    background: #eeeeee;
-    color: #666;
-
+    background: var(--pink-light);
+    color: var(--primary-text);
     cursor: pointer;
-
     font-size: 11px;
 }
 
-
-/* =========================================================
-   LIST WARNA
-========================================================= */
+.add-color:hover { background: var(--pink-soft); }
 
 .warna-list {
     display: grid;
-
     grid-template-columns: repeat(2, 1fr);
-
     gap: 8px;
-
     margin-bottom: 15px;
 }
 
 .warna-item {
     display: flex;
     align-items: center;
-
     gap: 8px;
-
     font-size: 14px;
+    color: var(--text-primary);
 }
 
 .warna-item input[type="checkbox"] {
     width: 16px;
     height: 16px;
-
     margin: 0;
+    accent-color: var(--primary);
 }
-
-
-/* =========================================================
-   HARGA
-========================================================= */
 
 .price-input {
     display: flex;
-
-    height: 38px;
-
-    border: 1px solid #ccc;
+    height: 34px;
+    border: 1px solid var(--border);
     border-radius: 4px;
-
     overflow: hidden;
 }
 
 .price-input span {
     display: flex;
     align-items: center;
-
     padding: 0 10px;
-
-    background: #eeeeee;
-
+    background: var(--pink-light);
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
 .price-input input {
     height: 100%;
-
     border: none;
     border-radius: 0;
+    box-shadow: none !important;
 }
-
-
-/* =========================================================
-   BUTTON FORM
-========================================================= */
 
 .form-buttons {
     display: flex;
-
     justify-content: space-between;
-
     gap: 15px;
-
     margin-top: 10px;
 }
 
 .form-buttons button {
     flex: 1;
-
-    height: 40px;
-
+    height: 34px;
     border-radius: 5px;
-
     cursor: pointer;
-
-    font-family: Arial, sans-serif;
+    font-family: inherit;
     font-size: 14px;
+    transition: 0.2s;
 }
 
-.cancel {
-    border: 1px solid #ccc;
+.cancel { border: 1px solid var(--border); background: var(--pink-light); color: var(--text-primary); }
+.cancel:hover { background: var(--pink-soft); }
 
-    background: #eeeeee;
-    color: #333;
-}
-
-.save {
-    border: none;
-
-    background: #65bd7a;
-    color: #ffffff;
-}
+.save { border: none; background: var(--primary); color: #ffffff; }
+.save:hover { background: var(--primary-dark); }
 
 
 /* =========================================================
    MODAL HAPUS PRODUK
-========================================================= */
+   ========================================================= */
 
 .delete-modal {
     position: fixed;
-
     inset: 0;
-
-    background: rgba(0, 0, 0, 0.45);
-
+    background: rgba(74, 51, 56, 0.45);
     display: none;
     align-items: center;
     justify-content: center;
-
     z-index: 9999;
 }
 
-.delete-modal.show {
-    display: flex;
-}
+.delete-modal.show { display: flex; }
 
 .delete-modal-box {
     width: 380px;
-
     padding: 30px;
-
     background: #ffffff;
-
     border-radius: 18px;
-
     text-align: center;
-
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-
+    box-shadow: 0 15px 40px rgba(74, 51, 56, 0.2);
     animation: modalMuncul 0.2s ease;
 }
 
 .delete-icon {
     width: 55px;
     height: 55px;
-
     margin: 0 auto 15px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background: #ffe5e5;
-
+    background: var(--danger-bg);
     border-radius: 50%;
-
     font-size: 25px;
 }
 
-.delete-modal-box h3 {
-    margin-bottom: 10px;
+.delete-modal-box h3 { margin-bottom: 10px; font-size: 20px; color: var(--text-primary); }
 
-    font-size: 20px;
-}
-
-.delete-modal-box p {
-    color: #777;
-
-    font-size: 14px;
-
-    line-height: 1.5;
-}
+.delete-modal-box p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
 
 .delete-modal-actions {
     display: flex;
     justify-content: center;
-
     gap: 10px;
-
     margin-top: 25px;
 }
 
 .delete-modal-actions button {
     padding: 10px 25px;
-
     border: none;
     border-radius: 8px;
-
     cursor: pointer;
-
     font-size: 14px;
 }
 
-.btn-batal {
-    background: #eeeeee;
-    color: #333;
-}
+.btn-batal { background: var(--pink-light); color: var(--text-primary); }
+.btn-batal:hover { background: var(--pink-soft); }
 
-.btn-hapus {
-    background: #e53935;
-    color: #ffffff;
-}
-
-.btn-batal:hover {
-    background: #dddddd;
-}
-
-.btn-hapus:hover {
-    background: #c62828;
-}
-
-
-/* =========================================================
-   ANIMATION
-========================================================= */
+.btn-hapus { background: var(--danger); color: #ffffff; }
+.btn-hapus:hover { background: #A94442; }
 
 @keyframes modalMuncul {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
 
 /* =========================================================
    RESPONSIVE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 1100px) {
-
-    .sidebar {
-        width: 220px;
-    }
-
-    .content {
-        margin-left: 220px;
-        width: calc(100% - 220px);
-    }
-
-    nav a {
-        padding: 16px 45px;
-    }
-
-    .summary {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .add-product-panel {
-        width: 320px;
-    }
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .add-product-panel { width: 320px; }
 }
-
 
 @media (max-width: 750px) {
-
-    body {
-        display: block;
-    }
-
-    .sidebar {
-        position: relative;
-
-        width: 100%;
-        height: auto;
-    }
-
-    .content {
-        margin-left: 0;
-
-        width: 100%;
-
-        padding: 25px 20px;
-    }
-
-    .summary {
-        grid-template-columns: 1fr;
-    }
-
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-
-        gap: 10px;
-    }
-
-    header h1 {
-        font-size: 28px;
-    }
-
-    .toolbar {
-        flex-wrap: wrap;
-    }
-
-    .toolbar input,
-    .toolbar select {
-        width: 100%;
-    }
-
-    .reset {
-        margin-left: 0;
-    }
-
-    .add {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .product-area {
-        overflow-x: auto;
-    }
-
-    .product-table {
-        min-width: 900px;
-    }
-
-    .add-product-panel {
-        width: 100%;
-    }
+    html, body { overflow: auto; }
+    .sidebar { position: relative; width: 100%; height: auto; }
+    .content { height: auto; margin-left: 0; width: 100%; padding: 25px 20px; }
+    .summary { grid-template-columns: 1fr; }
+    header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    header h1 { font-size: 28px; }
+    .toolbar { flex-wrap: wrap; }
+    .toolbar input, .toolbar select { width: 100%; }
+    .reset { margin-left: 0; }
+    .add { width: 100%; margin-left: 0; }
+    .product-area { overflow-x: auto; }
+    .product-table { min-width: 900px; }
+    .add-product-panel { width: 100%; }
 }
 
-.foto {
-    width: 55px;
-    height: 55px;
+/* ===== Import / Export Excel ===== */
+.excel-actions {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    gap: 8px;
+    margin-left: auto;
 }
 
-.foto img {
-    width: 55px;
-    height: 55px;
-    object-fit: cover;
-    border-radius: 7px;
-    border: 1px solid #eee;
+/* .reset punya margin-left: -12px, di dalam grup ini tidak diperlukan */
+.excel-actions .reset {
+    margin-left: 0;
+    white-space: nowrap;
+}
+
+/* dorongan ke kanan sekarang dipegang grup Excel, bukan tombol Tambah */
+.excel-actions + .add {
+    margin-left: 0;
+    white-space: nowrap;
 }

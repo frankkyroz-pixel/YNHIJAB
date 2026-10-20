@@ -2,839 +2,456 @@
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Laporan - YN Hijab</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/laporan.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/laporan.css') }}">
 </head>
 
 
 <body>
 
-
 <!-- SIDEBAR -->
-
 <aside class="sidebar">
 
     <div class="logo">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
-        
+        <p>Yn Hijab Fashion</p>
     </div>
 
     <nav>
-
-        <a href="/dashboard"> Home </a>
-        <a href="/produk"> Produk </a>
-        <a href="/stok"> Stok </a>
-        <a href="/pesanan"> Pesanan </a>
-        <a href="/barang-masuk"> Barang Masuk </a>
-        <a href="/barang-keluar"> Barang Keluar </a>
-        <a href="/laporan"class="active"> Laporan </a>
-
-    </nav>
+            <a href="/dashboard">
+                <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+                Home
+            </a>
+            <a href="/produk">
+                <svg viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+                Produk
+            </a>
+            <a href="/stok">
+                <svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg>
+                Stok
+            </a>
+            <a href="/pesanan">
+                <svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+                Pesanan
+            </a>
+            <a href="/barang-masuk">
+                <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+                Barang Masuk
+            </a>
+            <a href="/barang-keluar">
+                <svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 21h16"/></svg>
+                Barang Keluar
+            </a>
+            <a href="/laporan" class="active">
+                <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+                Laporan
+            </a>
+        </nav>
 
 </aside>
 
 
-
 <!-- CONTENT -->
-
 <main class="content">
 
-
     <!-- HEADER -->
-
     <header class="header">
 
         <div>
-
             <h2>Laporan</h2>
-
-            <p>
-                Laporan aktivitas YN Hijab
-            </p>
-
+            <p>Laporan aktivitas YN Hijab</p>
         </div>
 
-
         <div class="admin">
-
             🔔 &nbsp; 👤 Admin
-
         </div>
 
     </header>
 
 
-
     <!-- SUMMARY -->
-
     <section class="summary">
 
-
         <div class="card">
-
             <div class="icon">
-                💰
+                <img src="{{ url_for('static', filename='img/icons/21.png') }}" alt="Total Produk">
             </div>
-
             <div>
-
                 <p>Total Penjualan</p>
-
-                <h3>
-                    Rp {{ "{:,.0f}".format(
-                        ringkasan_pesanan.total_penjualan or 0
-                    ).replace(",", ".") }}
-                </h3>
-
+                <h3>Rp {{ "{:,.0f}".format(ringkasan_pesanan.total_penjualan or 0).replace(",", ".") }}</h3>
             </div>
-
         </div>
 
-
-
         <div class="card">
-
             <div class="icon">
-                🛒
-            </div>
-
+                <img src="{{ url_for('static', filename='img/icons/10.png') }}" alt="Total Produk">
+                </div>
             <div>
-
                 <p>Total Pesanan</p>
-
-                <h3>
-                    {{ ringkasan_pesanan.total_pesanan }}
-                </h3>
-
+                <h3>{{ ringkasan_pesanan.total_pesanan }}</h3>
             </div>
-
         </div>
 
-
-
         <div class="card">
-
             <div class="icon">
-                📥
-            </div>
-
+                <img src="{{ url_for('static', filename='img/icons/14.png') }}" alt="Total Produk">
+                </div>
             <div>
-
                 <p>Barang Masuk</p>
-
-                <h3>
-                    {{ ringkasan_masuk.total_barang_masuk }}
-                </h3>
-
+                <h3>{{ ringkasan_masuk.total_barang_masuk }}</h3>
             </div>
-
         </div>
-
-
 
         <div class="card">
-
             <div class="icon">
-                📤
-            </div>
-
+                <img src="{{ url_for('static', filename='img/icons/19.png') }}" alt="Total Produk">
+                </div>
             <div>
-
                 <p>Barang Keluar</p>
-
-                <h3>
-                    {{ ringkasan_keluar.total_barang_keluar }}
-                </h3>
-
+                <h3>{{ ringkasan_keluar.total_barang_keluar }}</h3>
             </div>
-
         </div>
-
 
     </section>
-
 
 
     <!-- TOOLBAR -->
-
     <section class="panel toolbar">
 
-
         <div class="search-box">
-
             <input
                 type="text"
                 id="searchLaporan"
-                placeholder="Cari pelanggan atau nomor pesanan..."
-            >
-
+                placeholder="Cari pelanggan atau nomor pesanan...">
         </div>
 
-
         <select id="filterStatus">
-
-            <option value="">
-                Semua Status
-            </option>
-
-            <option value="Menunggu">
-                Menunggu
-            </option>
-
-            <option value="Diproses">
-                Diproses
-            </option>
-
-            <option value="Siap Dipacking">
-                Siap Dipacking
-            </option>
-
-            <option value="Dikirim">
-                Dikirim
-            </option>
-
-            <option value="Selesai">
-                Selesai
-            </option>
-
-            <option value="dibatalkan">
-                Dibatalkan
-            </option>
-
+            <option value="">Semua Status</option>
+            <option value="Menunggu">Menunggu</option>
+            <option value="Diproses">Diproses</option>
+            <option value="Siap Dipacking">Siap Dipacking</option>
+            <option value="Dikirim">Dikirim</option>
+            <option value="Selesai">Selesai</option>
+            <option value="dibatalkan">Dibatalkan</option>
         </select>
 
+        <input type="date" id="filterDari" title="Dari tanggal">
+        <input type="date" id="filterSampai" title="Sampai tanggal">
 
-        <button
-            type="button"
-            onclick="resetFilter()">
+        <button type="button" onclick="resetFilter()">Reset</button>
 
-            Reset
-
-        </button>
-
-
-        <a
-            href="/laporan/export"
-            class="btn-export">
-
-            📊 Export Excel
-
-        </a>
-
+        <a href="/laporan/export-pdf" id="btnExportPdf" class="btn-export">📄 Export PDF</a>
 
     </section>
 
 
-
     <!-- GRAFIK -->
-
     <section class="panel grafik">
-
 
         <div class="panel-header">
 
-            <h3>
-                Grafik Penjualan
-            </h3>
-
+            <h3>Grafik Penjualan</h3>
 
             <select id="periodeGrafik">
-
-                <option value="7">
-                    7 Hari Terakhir
-                </option>
-
-                <option value="30">
-                    30 Hari Terakhir
-                </option>
-
-                <option value="90">
-                    3 Bulan Terakhir
-                </option>
-
-                <option value="365">
-                    1 Tahun Terakhir
-                </option>
-
+                <option value="7">7 Hari Terakhir</option>
+                <option value="30">30 Hari Terakhir</option>
+                <option value="90">3 Bulan Terakhir</option>
+                <option value="365">1 Tahun Terakhir</option>
             </select>
 
         </div>
 
-
         <div class="chart">
-
             <canvas id="reportChart"></canvas>
-
         </div>
-
 
     </section>
 
 
-
     <!-- TABEL -->
-
     <section class="panel">
 
-
         <div class="panel-header">
-
-            <h3>
-                Detail Laporan Penjualan
-            </h3>
-
+            <h3>Detail Laporan Penjualan</h3>
         </div>
-
 
         <div class="table-container">
 
             <table id="laporanTable">
 
-
                 <thead>
-
                     <tr>
-
-                        <th>
-                            No Pesanan
-                        </th>
-
-                        <th>
-                            Tanggal
-                        </th>
-
-                        <th>
-                            Pelanggan
-                        </th>
-
-                        <th>
-                            No HP
-                        </th>
-
-                        <th>
-                            Total
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Pengambilan
-                        </th>
-
+                        <th>No Pesanan</th>
+                        <th>Tanggal</th>
+                        <th>Pelanggan</th>
+                        <th>No HP</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Pengambilan</th>
                     </tr>
-
                 </thead>
 
-
                 <tbody>
-
 
                     {% for item in data_laporan %}
 
                     <tr
                         data-status="{{ item.STATUS }}"
+                        data-tanggal="{{ item.tanggal.strftime('%Y-%m-%d') if item.tanggal else '' }}"
                         data-search="{{ item.id_pesanan }} {{ item.nama_customor }} {{ item.no_hp }}">
 
-                        <td>
-                            #{{ item.id_pesanan }}
-                        </td>
-
-                        <td>
-                            {{ item.tanggal }}
-                        </td>
-
-                        <td>
-                            {{ item.nama_customor }}
-                        </td>
-
-                        <td>
-                            {{ item.no_hp }}
-                        </td>
-
-                        <td>
-
-                            Rp {{
-                                "{:,.0f}".format(
-                                    item.total_harga or 0
-                                ).replace(",", ".")
-                            }}
-
-                        </td>
-
-                        <td>
-
-                            <span class="status">
-
-                                {{ item.STATUS }}
-
-                            </span>
-
-                        </td>
-
-                        <td>
-                            {{ item.metode_pengambilan }}
-                        </td>
+                        <td>#{{ item.id_pesanan }}</td>
+                        <td>{{ item.tanggal }}</td>
+                        <td>{{ item.nama_customor }}</td>
+                        <td>{{ item.no_hp }}</td>
+                        <td>Rp {{ "{:,.0f}".format(item.total_harga or 0).replace(",", ".") }}</td>
+                        <td><span class="status">{{ item.STATUS }}</span></td>
+                        <td>{{ item.metode_pengambilan }}</td>
 
                     </tr>
 
                     {% else %}
 
                     <tr>
-
-                        <td
-                            colspan="7"
-                            class="empty">
-
-                            Belum ada data laporan.
-
-                        </td>
-
+                        <td colspan="7" class="empty">Belum ada data laporan.</td>
                     </tr>
 
                     {% endfor %}
 
-
                 </tbody>
-
 
             </table>
 
         </div>
 
-
     </section>
-
 
 </main>
 
 
-
 <!-- CHART.JS -->
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
 <script>
-
 
 /* =========================================
    DATA DARI FLASK
 ========================================= */
 
-const grafikPenjualan =
-    {{ grafik_penjualan | tojson }};
-
+const grafikPenjualan = {{ grafik_penjualan | tojson }};
 
 
 /* =========================================
-   DATA GRAFIK
+   WARNA TEMA
 ========================================= */
 
-const dataPenjualan = {
+const WARNA_UTAMA = "#D58A94";
+const WARNA_ISI   = "rgba(213, 138, 148, 0.18)";
 
-    7: {
-        labels: [],
-        data: []
-    },
-
-    30: {
-        labels: [],
-        data: []
-    },
-
-    90: {
-        labels: [],
-        data: []
-    },
-
-    365: {
-        labels: [],
-        data: []
-    }
-
-};
-
+Chart.defaults.color = "#85696F";
+Chart.defaults.font.family = '"Inter", "Segoe UI", Arial, sans-serif';
 
 
 /* =========================================
-   BUAT DATA GRAFIK
+   BUAT DATA GRAFIK PER PERIODE
 ========================================= */
 
 function buatDataGrafik(periode) {
 
     const sekarang = new Date();
-
     const batas = new Date();
 
-    batas.setDate(
-        sekarang.getDate() - periode
-    );
-
+    batas.setDate(sekarang.getDate() - periode);
 
     const data = grafikPenjualan
-        .map(item => {
-
-            return {
-
-                tanggal:
-                    new Date(item.tanggal),
-
-                penjualan:
-                    Number(item.penjualan)
-
-            };
-
-        })
-
-        .filter(item => {
-
-            return item.tanggal >= batas;
-
-        })
-
-        .sort((a, b) => {
-
-            return a.tanggal - b.tanggal;
-
-        });
-
+        .map(item => ({
+            tanggal: new Date(item.tanggal),
+            penjualan: Number(item.penjualan)
+        }))
+        .filter(item => item.tanggal >= batas)
+        .sort((a, b) => a.tanggal - b.tanggal);
 
     return {
-
-        labels: data.map(item => {
-
-            return item.tanggal
-                .toLocaleDateString(
-                    "id-ID",
-                    {
-                        day: "numeric",
-                        month: "short"
-                    }
-                );
-
-        }),
-
-
-        data: data.map(item => {
-
-            return item.penjualan;
-
-        })
-
+        labels: data.map(item =>
+            item.tanggal.toLocaleDateString("id-ID", { day: "numeric", month: "short" })
+        ),
+        data: data.map(item => item.penjualan)
     };
 
 }
 
-
-
-/* =========================================
-   SIAPKAN SEMUA PERIODE
-========================================= */
-
-dataPenjualan[7] =
-    buatDataGrafik(7);
-
-
-dataPenjualan[30] =
-    buatDataGrafik(30);
-
-
-dataPenjualan[90] =
-    buatDataGrafik(90);
-
-
-dataPenjualan[365] =
-    buatDataGrafik(365);
-
+const dataPenjualan = {
+    7:   buatDataGrafik(7),
+    30:  buatDataGrafik(30),
+    90:  buatDataGrafik(90),
+    365: buatDataGrafik(365)
+};
 
 
 /* =========================================
    CHART
 ========================================= */
 
-const ctx =
-    document.getElementById(
-        "reportChart"
-    );
+const ctx = document.getElementById("reportChart");
 
+const reportChart = new Chart(ctx, {
 
-const reportChart =
-    new Chart(ctx, {
+    type: "line",
 
-        type: "line",
+    data: {
+        labels: dataPenjualan[7].labels,
 
+        datasets: [{
+            label: "Penjualan",
+            data: dataPenjualan[7].data,
 
-        data: {
+            borderColor: WARNA_UTAMA,
+            backgroundColor: WARNA_ISI,
+            pointBackgroundColor: WARNA_UTAMA,
+            pointBorderColor: "#FFFFFF",
+            pointBorderWidth: 2,
 
-            labels:
-                dataPenjualan[7].labels,
+            borderWidth: 3,
+            tension: 0.35,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            fill: true
+        }]
+    },
 
+    options: {
 
-            datasets: [
+        responsive: true,
+        maintainAspectRatio: false,
 
-                {
+        interaction: { intersect: false, mode: "index" },
 
-                    label:
-                        "Penjualan",
+        plugins: {
 
+            legend: { display: false },
 
-                    data:
-                        dataPenjualan[7].data,
-
-
-                    borderWidth:
-                        2,
-
-
-                    tension:
-                        0.4,
-
-
-                    pointRadius:
-                        3,
-
-
-                    pointHoverRadius:
-                        6,
-
-
-                    fill:
-                        true
-
+            tooltip: {
+                backgroundColor: "#4A3338",
+                callbacks: {
+                    label: function (context) {
+                        return " Rp " + context.parsed.y.toLocaleString("id-ID");
+                    }
                 }
-
-            ]
-
+            }
         },
 
+        scales: {
 
-        options: {
+            x: { grid: { display: false } },
 
-            responsive:
-                true,
+            y: {
+                beginAtZero: true,
+                grid: { color: "#F0E2E4" },
 
+                ticks: {
+                    callback: function (value) {
 
-            maintainAspectRatio:
-                false,
+                        if (value >= 1000000) {
+                            return "Rp " + (value / 1000000).toLocaleString("id-ID") + " jt";
+                        }
 
+                        if (value >= 1000) {
+                            return "Rp " + (value / 1000).toLocaleString("id-ID") + " rb";
+                        }
 
-            interaction: {
-
-                intersect:
-                    false,
-
-
-                mode:
-                    "index"
-
-            },
-
-
-            plugins: {
-
-                legend: {
-
-                    display:
-                        false
-
-                },
-
-
-                tooltip: {
-
-                    callbacks: {
-
-                        label:
-                            function(context) {
-
-                                return " Rp " +
-
-                                    context.parsed.y
-                                        .toLocaleString(
-                                            "id-ID"
-                                        );
-
-                            }
-
+                        return "Rp " + Number(value).toLocaleString("id-ID");
                     }
-
                 }
-
-            },
-
-
-            scales: {
-
-                x: {
-
-                    grid: {
-
-                        display:
-                            false
-
-                    }
-
-                },
-
-
-                y: {
-
-                    beginAtZero:
-                        true,
-
-
-                    ticks: {
-
-                        callback:
-                            function(value) {
-
-                                return "Rp " +
-
-                                    (
-                                        value /
-                                        1000000
-                                    ) +
-
-                                    "jt";
-
-                            }
-
-                    }
-
-                }
-
             }
-
         }
+    }
 
-    });
-
+});
 
 
 /* =========================================
    DROPDOWN PERIODE
 ========================================= */
 
-document
-    .getElementById("periodeGrafik")
-    .addEventListener(
-        "change",
-        function() {
+document.getElementById("periodeGrafik").addEventListener("change", function () {
 
-            const periode =
-                Number(this.value);
+    const periode = Number(this.value);
 
+    reportChart.data.labels = dataPenjualan[periode].labels;
+    reportChart.data.datasets[0].data = dataPenjualan[periode].data;
+    reportChart.update();
 
-            reportChart.data.labels =
-                dataPenjualan[periode].labels;
-
-
-            reportChart.data.datasets[0].data =
-                dataPenjualan[periode].data;
-
-
-            reportChart.update();
-
-        }
-    );
-
+});
 
 
 /* =========================================
    SEARCH + FILTER
 ========================================= */
 
-const searchInput =
-    document.getElementById(
-        "searchLaporan"
-    );
-
-
-const statusFilter =
-    document.getElementById(
-        "filterStatus"
-    );
-
+const searchInput  = document.getElementById("searchLaporan");
+const statusFilter = document.getElementById("filterStatus");
+const dariInput    = document.getElementById("filterDari");
+const sampaiInput  = document.getElementById("filterSampai");
 
 function filterTable() {
 
-    const search =
-        searchInput.value
-            .toLowerCase();
+    const search = searchInput.value.toLowerCase();
+    const status = statusFilter.value.toLowerCase();
+    const dari   = dariInput.value;      // format YYYY-MM-DD
+    const sampai = sampaiInput.value;
 
+    document.querySelectorAll("#laporanTable tbody tr").forEach(row => {
 
-    const status =
-        statusFilter.value
-            .toLowerCase();
+        // baris "Belum ada data" tidak punya data-search, biarkan
+        if (row.dataset.search === undefined) return;
 
+        const rowSearch  = row.dataset.search.toLowerCase();
+        const rowStatus  = (row.dataset.status || "").toLowerCase();
+        const rowTanggal = row.dataset.tanggal || "";
 
-    const rows =
-        document.querySelectorAll(
-            "#laporanTable tbody tr"
-        );
-
-
-    rows.forEach(row => {
-
-        const rowSearch =
-            (
-                row.dataset.search ||
-                ""
-            ).toLowerCase();
-
-
-        const rowStatus =
-            (
-                row.dataset.status ||
-                ""
-            ).toLowerCase();
-
-
-        const cocokSearch =
-            rowSearch.includes(
-                search
-            );
-
-
-        const cocokStatus =
-            !status ||
-            rowStatus === status;
-
+        const cocokSearch = rowSearch.includes(search);
+        const cocokStatus = !status || rowStatus === status;
+        const cocokDari   = !dari   || (rowTanggal && rowTanggal >= dari);
+        const cocokSampai = !sampai || (rowTanggal && rowTanggal <= sampai);
 
         row.style.display =
-            cocokSearch &&
-            cocokStatus
-                ? ""
-                : "none";
+            cocokSearch && cocokStatus && cocokDari && cocokSampai ? "" : "none";
 
     });
+
+    updateLinkExport();
 
 }
 
 
+/* =========================================
+   LINK EXPORT PDF (ikut filter yang aktif)
+========================================= */
 
-searchInput.addEventListener(
-    "input",
-    filterTable
-);
+function updateLinkExport() {
 
+    const params = new URLSearchParams();
 
-statusFilter.addEventListener(
-    "change",
-    filterTable
-);
+    if (statusFilter.value)       params.set("status", statusFilter.value);
+    if (searchInput.value.trim()) params.set("q", searchInput.value.trim());
+    if (dariInput.value)          params.set("dari", dariInput.value);
+    if (sampaiInput.value)        params.set("sampai", sampaiInput.value);
 
+    const query = params.toString();
+
+    document.getElementById("btnExportPdf").href =
+        "/laporan/export-pdf" + (query ? "?" + query : "");
+
+}
+
+searchInput.addEventListener("input", filterTable);
+statusFilter.addEventListener("change", filterTable);
+dariInput.addEventListener("change", filterTable);
+sampaiInput.addEventListener("change", filterTable);
 
 
 /* =========================================
@@ -843,21 +460,16 @@ statusFilter.addEventListener(
 
 function resetFilter() {
 
-    searchInput.value =
-        "";
-
-
-    statusFilter.value =
-        "";
-
+    searchInput.value = "";
+    statusFilter.value = "";
+    dariInput.value = "";
+    sampaiInput.value = "";
 
     filterTable();
 
 }
 
-
 </script>
-
 
 </body>
 

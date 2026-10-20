@@ -1,14 +1,19 @@
 from flask import Flask, render_template, request, redirect, flash, send_file
 from models.database import get_db_connection
 from io import BytesIO
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
+from models.laporan_pdf import buat_pdf_laporan_penjualan
+from produk_excel import produk_excel_bp
+from barang_masuk_excel import barang_masuk_excel_bp
 import os
 import uuid
 from datetime import datetime
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+# Fitur Import / Export Excel produk
+app.register_blueprint(produk_excel_bp)
+app.register_blueprint(barang_masuk_excel_bp)
 
 
 # =========================================================
@@ -2846,17 +2851,60 @@ def laporan():
 
 
 # =========================================================
-# EXPORT LAPORAN EXCEL
+# EXPORT LAPORAN PDF
 # =========================================================
 
-@app.route("/laporan/export")
-def export_laporan():
+def _parse_tanggal(teks):
+    """'2026-10-19' -> date. Nilai kosong/tidak valid -> None."""
+    if not teks:
+        return None
+    try:
+        return datetime.strptime(teks.strip(), "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+@app.route("/laporan/export-pdf")
+def export_laporan_pdf():
+    # Filter yang sama dengan halaman Laporan
+    status = request.args.get("status", "").strip()
+    pencarian = request.args.get("q", "").strip()
+    dari = _parse_tanggal(request.args.get("dari"))
+    sampai = _parse_tanggal(request.args.get("sampai"))
+
+    if dari and sampai and dari > sampai:
+        dari, sampai = sampai, dari
+
+    # Query berparameter (hanya SELECT, tidak mengubah data)
+    kondisi = []
+    params = []
+
+    if status:
+        kondisi.append("LOWER(STATUS) = LOWER(%s)")
+        params.append(status)
+
+    if pencarian:
+        kondisi.append(
+            "LOWER(CONCAT_WS(' ', id_pesanan, nama_customor, no_hp)) "
+            "LIKE LOWER(%s)"
+        )
+        params.append("%" + pencarian + "%")
+
+    if dari:
+        kondisi.append("DATE(tanggal) >= %s")
+        params.append(dari)
+
+    if sampai:
+        kondisi.append("DATE(tanggal) <= %s")
+        params.append(sampai)
+
+    where_sql = ("WHERE " + " AND ".join(kondisi)) if kondisi else ""
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     try:
-
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT id_pesanan,
                    no_pesanan,
                    tanggal,
@@ -2868,157 +2916,38 @@ def export_laporan():
 
             FROM pesanan
 
+            {where_sql}
+
             ORDER BY tanggal DESC
-        """)
+        """, params)
 
         data_laporan = cursor.fetchall()
-
-        workbook = Workbook()
-
-        sheet = workbook.active
-        sheet.title = "Laporan Penjualan"
-
-        sheet["A1"] = (
-            "LAPORAN PENJUALAN YN HIJAB"
-        )
-
-        sheet["A1"].font = Font(
-            bold=True,
-            size=16
-        )
-
-        sheet["A1"].alignment = Alignment(
-            horizontal="center"
-        )
-
-        sheet.merge_cells("A1:G1")
-
-        header = [
-            "No Pesanan",
-            "Tanggal",
-            "Pelanggan",
-            "No HP",
-            "Total",
-            "Status",
-            "Metode Pengambilan"
-        ]
-
-        for column, value in enumerate(
-            header,
-            start=1
-        ):
-
-            cell = sheet.cell(
-                row=3,
-                column=column
-            )
-
-            cell.value = value
-            cell.font = Font(
-                bold=True
-            )
-
-        row_number = 4
-
-        for item in data_laporan:
-
-            sheet.cell(
-                row=row_number,
-                column=1
-            ).value = item[
-                "no_pesanan"
-            ]
-
-            sheet.cell(
-                row=row_number,
-                column=2
-            ).value = item[
-                "tanggal"
-            ]
-
-            sheet.cell(
-                row=row_number,
-                column=3
-            ).value = item[
-                "nama_customor"
-            ]
-
-            sheet.cell(
-                row=row_number,
-                column=4
-            ).value = item[
-                "no_hp"
-            ]
-
-            sheet.cell(
-                row=row_number,
-                column=5
-            ).value = float(
-                item["total_harga"] or 0
-            )
-
-            sheet.cell(
-                row=row_number,
-                column=6
-            ).value = item[
-                "STATUS"
-            ]
-
-            sheet.cell(
-                row=row_number,
-                column=7
-            ).value = item[
-                "metode_pengambilan"
-            ]
-
-            row_number += 1
-
-        for row in range(
-            4,
-            row_number
-        ):
-
-            sheet.cell(
-                row=row,
-                column=5
-            ).number_format = "#,##0"
-
-        widths = {
-            "A": 15,
-            "B": 22,
-            "C": 25,
-            "D": 20,
-            "E": 18,
-            "F": 20,
-            "G": 25
-        }
-
-        for column, width in widths.items():
-            sheet.column_dimensions[
-                column
-            ].width = width
-
-        output = BytesIO()
-
-        workbook.save(output)
-
-        output.seek(0)
-
-        return send_file(
-            output,
-            as_attachment=True,
-            download_name=(
-                "laporan_yn_hijab.xlsx"
-            ),
-            mimetype=(
-                "application/vnd.openxmlformats-officedocument."
-                "spreadsheetml.sheet"
-            )
-        )
 
     finally:
         cursor.close()
         conn.close()
+
+    sekarang = datetime.now()
+
+    pdf = buat_pdf_laporan_penjualan(
+        data_laporan,
+        dari=dari,
+        sampai=sampai,
+        status=status,
+        pencarian=pencarian,
+        waktu_cetak=sekarang
+    )
+
+    return send_file(
+        pdf,
+        as_attachment=True,
+        download_name=(
+            "laporan_penjualan_yn_hijab_"
+            + sekarang.strftime("%Y%m%d_%H%M")
+            + ".pdf"
+        ),
+        mimetype="application/pdf"
+    )
 
 
 # =========================================================

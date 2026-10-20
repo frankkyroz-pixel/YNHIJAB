@@ -18,17 +18,39 @@
 
         <div class="logo">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="YN Hijab">
-        
+        <p>Yn Hijab Fashion</p>
+
     </div>
 
         <nav>
-            <a href="/dashboard">Home</a>
-            <a href="/produk">Produk</a>
-            <a href="/stok">Stok</a>
-            <a href="/pesanan">Pesanan</a>
-            <a href="/barang-masuk" class="active">Barang Masuk</a>
-            <a href="/barang-keluar">Barang Keluar</a>
-            <a href="/laporan">Laporan</a>
+            <a href="/dashboard">
+                <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+                Home
+            </a>
+            <a href="/produk">
+                <svg viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+                Produk
+            </a>
+            <a href="/stok">
+                <svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg>
+                Stok
+            </a>
+            <a href="/pesanan">
+                <svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6"/><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+                Pesanan
+            </a>
+            <a href="/barang-masuk" class="active">
+                <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+                Barang Masuk
+            </a>
+            <a href="/barang-keluar">
+                <svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 21h16"/></svg>
+                Barang Keluar
+            </a>
+            <a href="/laporan">
+                <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+                Laporan
+            </a>
         </nav>
 
     </aside>
@@ -56,7 +78,9 @@
         <section class="summary">
 
             <div class="card">
-                <div class="icon">📦</div>
+                <div class="icon">
+                    <img src="{{ url_for('static', filename='img/icons/14.png') }}" alt="Total Produk">
+                </div>
 
                 <div>
                     <p>Total Barang Masuk</p>
@@ -66,7 +90,9 @@
 
 
             <div class="card">
-                <div class="icon">📥</div>
+                <div class="icon">
+                    <img src="{{ url_for('static', filename='img/icons/15.png') }}" alt="Total Produk">
+                </div>
 
                 <div>
                     <p>Barang Masuk Hari Ini</p>
@@ -76,7 +102,9 @@
 
 
             <div class="card">
-                <div class="icon">🧾</div>
+                <div class="icon">
+                    <img src="{{ url_for('static', filename='img/icons/17.png') }}" alt="Total Produk">
+                </div>
 
                 <div>
                     <p>Total Transaksi</p>
@@ -86,8 +114,9 @@
 
 
             <div class="card">
-                <div class="icon">💰</div>
-
+                <div class="icon">
+                    <img src="{{ url_for('static', filename='img/icons/18.png') }}" alt="Total Produk">
+                </div>
                 <div>
                     <p>Total Nilai Barang</p>
                     <h3>Rp {{ "{:,.0f}".format(total_nilai_barang).replace(",",".") }}</h3>
@@ -141,6 +170,30 @@
         Reset Filter
     </button>
 
+
+
+    <!-- IMPORT / EXPORT EXCEL -->
+    <a class="btn-excel"
+       href="/barang-masuk/export-excel"
+       title="Unduh riwayat Barang Masuk (.xlsx)">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        Export Excel
+    </a>
+
+    <button class="btn-excel"
+            type="button"
+            title="Catat banyak Barang Masuk dari file Excel"
+            onclick="openImportModal()">
+        <svg viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+        Import Excel
+    </button>
+
+    <a class="btn-excel"
+       href="/barang-masuk/template-excel"
+       title="Unduh template Excel untuk import">
+        <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+        Download Template
+    </a>
 
     <button
         class="add"
@@ -445,6 +498,51 @@
 
         </div>
 
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- MODAL IMPORT EXCEL -->
+    <!-- ========================= -->
+
+    <div class="delete-modal" id="importModal">
+        <div class="import-card">
+
+            <h3>Import Barang Masuk dari Excel</h3>
+            <p class="import-sub">
+                Setiap baris Excel akan dicatat sebagai satu transaksi Barang Masuk
+                (nomor BM-xxxx) dan menambah stok varian yang bersangkutan.
+                Gunakan <strong>Download Template</strong> untuk format yang benar.
+            </p>
+
+            <div class="import-file">
+                <input type="file"
+                       id="importFile"
+                       accept=".xlsx">
+                <button type="button"
+                        class="save"
+                        id="btnImportPeriksa">
+                    Periksa File
+                </button>
+            </div>
+
+            <div class="import-body" id="importHasil"></div>
+
+            <div class="import-actions">
+                <button type="button"
+                        class="cancel-delete"
+                        id="btnImportTutup">
+                    Tutup
+                </button>
+                <button type="button"
+                        class="save"
+                        id="btnImportKonfirmasi"
+                        style="display:none;">
+                    Konfirmasi &amp; Simpan
+                </button>
+            </div>
+
+        </div>
     </div>
 
 
@@ -758,6 +856,233 @@
         filterBarangMasuk();
     }
 
+    </script>
+
+    <!-- ========================= -->
+    <!-- JAVASCRIPT IMPORT EXCEL -->
+    <!-- ========================= -->
+
+    <script>
+    (function () {
+
+        const modal = document.getElementById("importModal");
+        const inputFile = document.getElementById("importFile");
+        const hasil = document.getElementById("importHasil");
+        const btnPeriksa = document.getElementById("btnImportPeriksa");
+        const btnKonfirmasi = document.getElementById("btnImportKonfirmasi");
+        const btnTutup = document.getElementById("btnImportTutup");
+
+        let sedangProses = false;
+        let sudahBerhasil = false;
+
+        function esc(teks) {
+            return String(teks === null || teks === undefined ? "" : teks)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function rupiah(angka) {
+            return "Rp " + Math.round(angka).toLocaleString("id-ID");
+        }
+
+        function angka(n) {
+            return Number(n).toLocaleString("id-ID");
+        }
+
+        function resetTampilan() {
+            hasil.innerHTML = "";
+            btnKonfirmasi.style.display = "none";
+            btnKonfirmasi.disabled = false;
+        }
+
+        function setProses(aktif) {
+            sedangProses = aktif;
+            btnPeriksa.disabled = aktif;
+            btnKonfirmasi.disabled = aktif;
+            inputFile.disabled = aktif;
+        }
+
+        window.openImportModal = function () {
+            sudahBerhasil = false;
+            inputFile.value = "";
+            resetTampilan();
+            modal.classList.add("show");
+        };
+
+        function tutup() {
+            if (sedangProses) return;
+            modal.classList.remove("show");
+            if (sudahBerhasil) {
+                window.location.reload();
+            }
+        }
+        window.closeImportModal = tutup;
+        btnTutup.addEventListener("click", tutup);
+
+        // Mengganti file membatalkan pratinjau sebelumnya
+        inputFile.addEventListener("change", resetTampilan);
+
+        function tampilkanPesan(jenis, html) {
+            hasil.innerHTML = '<div class="import-box import-box-' + jenis + '">' + html + "</div>";
+        }
+
+        function tabelMasalah(daftar, batas) {
+            const potong = daftar.slice(0, batas);
+            let html = '<div class="import-table-wrap"><table class="import-table">' +
+                "<thead><tr><th style='width:80px'>Baris Excel</th><th>Masalah</th></tr></thead><tbody>";
+            potong.forEach(function (m) {
+                html += "<tr><td>" + (m.baris ? m.baris : "File") + "</td><td>" + esc(m.pesan) + "</td></tr>";
+            });
+            html += "</tbody></table></div>";
+            if (daftar.length > batas) {
+                html += '<p class="import-note">Menampilkan ' + batas + " dari " +
+                    daftar.length + " masalah.</p>";
+            }
+            return html;
+        }
+
+        async function kirim(url, tambahan) {
+            const berkas = inputFile.files[0];
+            const data = new FormData();
+            data.append("file", berkas);
+            if (tambahan) {
+                Object.keys(tambahan).forEach(function (k) { data.append(k, tambahan[k]); });
+            }
+            const resp = await fetch(url, { method: "POST", body: data });
+            let json = null;
+            try {
+                json = await resp.json();
+            } catch (e) {
+                json = { ok: false, errors: [{ baris: null, pesan: "Server mengirim respons tidak dikenal (kode " + resp.status + ")." }] };
+            }
+            return { status: resp.status, data: json };
+        }
+
+        function renderPratinjau(d) {
+            const r = d.ringkasan;
+            let html = "";
+
+            html += '<div class="import-summary">' +
+                "<div><small>Transaksi</small><strong>" + angka(r.jumlah_transaksi) + "</strong></div>" +
+                "<div><small>Varian</small><strong>" + angka(r.jumlah_varian) + "</strong></div>" +
+                "<div><small>Total Barang Masuk</small><strong>" + angka(r.total_pcs) + " pcs</strong></div>" +
+                "<div><small>Total Nilai</small><strong>" + rupiah(r.total_nilai) + "</strong></div>" +
+                "</div>";
+
+            html += '<p class="import-note">Nomor transaksi yang akan dibuat (perkiraan): <strong>' +
+                esc(d.faktur_perkiraan) + "</strong></p>";
+
+            if (d.duplikat) {
+                html += '<div class="import-box import-box-warning">' +
+                    "<strong>File dengan isi yang sama sudah pernah diimpor</strong> (" +
+                    esc(d.duplikat.no_faktur.join(", ")) + (d.duplikat.jumlah > d.duplikat.no_faktur.length ? ", ..." : "") +
+                    "). Memproses lagi akan menambah stok dua kali." +
+                    '<label class="import-dup-check"><input type="checkbox" id="importIzinkan"> ' +
+                    "Saya mengerti dan tetap ingin memproses ulang file ini</label></div>";
+            }
+
+            if (d.warnings && d.warnings.length) {
+                html += '<div class="import-box import-box-warning"><strong>' + d.warnings.length +
+                    " peringatan</strong> (tidak menggagalkan import):" + tabelMasalah(d.warnings, 50) + "</div>";
+            }
+
+            html += '<div class="import-table-wrap"><table class="import-table"><thead><tr>' +
+                "<th>Baris</th><th>Tanggal</th><th>Penjahit</th><th>Produk</th><th>Warna</th>" +
+                "<th>Rak</th><th class='num'>Jumlah</th><th class='num'>Harga</th><th class='num'>Total</th>" +
+                "</tr></thead><tbody>";
+            d.pratinjau.forEach(function (b) {
+                html += "<tr><td>" + b.baris + "</td><td>" + esc(b.tanggal) + "</td><td>" + esc(b.penjahit) +
+                    "</td><td>" + esc(b.kode_produk) + " &middot; " + esc(b.nama_produk) + "</td><td>" + esc(b.warna) +
+                    "</td><td>" + esc(b.kode_rak || "-") + "</td><td class='num'>" + angka(b.jumlah) +
+                    "</td><td class='num'>" + rupiah(b.harga) + "</td><td class='num'>" + rupiah(b.total) + "</td></tr>";
+            });
+            html += "</tbody></table></div>";
+            if (d.pratinjau_dipotong) {
+                html += '<p class="import-note">Pratinjau menampilkan ' + d.pratinjau.length +
+                    " baris pertama; seluruh " + angka(r.jumlah_transaksi) + " baris akan diproses.</p>";
+            }
+
+            hasil.innerHTML = html;
+
+            btnKonfirmasi.style.display = "";
+            const centang = document.getElementById("importIzinkan");
+            if (centang) {
+                btnKonfirmasi.disabled = true;
+                centang.addEventListener("change", function () {
+                    btnKonfirmasi.disabled = !centang.checked;
+                });
+            } else {
+                btnKonfirmasi.disabled = false;
+            }
+        }
+
+        btnPeriksa.addEventListener("click", async function () {
+            if (sedangProses) return;
+            resetTampilan();
+
+            if (!inputFile.files.length) {
+                tampilkanPesan("error", "Pilih file Excel (.xlsx) terlebih dahulu.");
+                return;
+            }
+
+            setProses(true);
+            tampilkanPesan("info", "Memeriksa file...");
+            try {
+                const res = await kirim("/barang-masuk/import/preview");
+                const d = res.data;
+                if (!d.ok) {
+                    const errs = d.errors || [];
+                    tampilkanPesan("error",
+                        "<strong>Ditemukan " + errs.length + " masalah.</strong> Perbaiki file Excel lalu periksa ulang. " +
+                        "Tidak ada data yang disimpan." + tabelMasalah(errs, 200));
+                } else {
+                    renderPratinjau(d);
+                }
+            } catch (e) {
+                tampilkanPesan("error", "Gagal menghubungi server. Coba lagi.");
+            } finally {
+                const adaTombol = btnKonfirmasi.style.display !== "none";
+                const centang = document.getElementById("importIzinkan");
+                setProses(false);
+                if (adaTombol && centang) { btnKonfirmasi.disabled = !centang.checked; }
+            }
+        });
+
+        btnKonfirmasi.addEventListener("click", async function () {
+            if (sedangProses) return;
+            const centang = document.getElementById("importIzinkan");
+            setProses(true);
+            try {
+                const res = await kirim("/barang-masuk/import/konfirmasi", {
+                    izinkan_duplikat: centang && centang.checked ? "1" : "0"
+                });
+                const d = res.data;
+                if (d.ok) {
+                    sudahBerhasil = true;
+                    btnKonfirmasi.style.display = "none";
+                    tampilkanPesan("ok",
+                        "<strong>Import berhasil.</strong> " + angka(d.jumlah_transaksi) + " transaksi (" +
+                        esc(d.faktur_awal) + " s/d " + esc(d.faktur_akhir) + ") dengan total " +
+                        angka(d.total_pcs) + " pcs sudah dicatat dan stok telah bertambah. " +
+                        "Tekan Tutup untuk menyegarkan halaman.");
+                } else {
+                    btnKonfirmasi.style.display = "none";
+                    const errs = d.errors || [];
+                    tampilkanPesan("error", "<strong>Import tidak diproses.</strong> Tidak ada data yang disimpan." +
+                        tabelMasalah(errs, 200));
+                }
+            } catch (e) {
+                btnKonfirmasi.style.display = "none";
+                tampilkanPesan("error", "Gagal menghubungi server. Periksa riwayat Barang Masuk sebelum mencoba lagi.");
+            } finally {
+                setProses(false);
+            }
+        });
+
+    })();
     </script>
 
 </body>
